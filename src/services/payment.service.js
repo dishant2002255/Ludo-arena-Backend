@@ -347,20 +347,24 @@ const getOrderById = async (orderId, userId = null) => {
 
 /**
  * Builds a standard UPI intent URL.
- * This is the URL used to open UPI apps like GPay, PhonePe, Paytm.
+ *
+ * IMPORTANT: URLSearchParams encodes @ as %40 which UPI apps REJECT.
+ * We must build the query string manually to keep @ unencoded in pa field.
  *
  * FORMAT: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=INR&tn=NOTE&tr=REF
  */
 const buildUpiUrl = (settings, amountRupees, orderReference) => {
-  const params = new URLSearchParams({
-    pa: settings.upiId,
-    pn: settings.upiName || 'Ludo Arena',
-    am: amountRupees.toFixed(2),
-    cu: 'INR',
-    tn: `${settings.upiNote || 'Ludo Arena Coins'} - ${orderReference}`,
-    tr: orderReference,
-  });
-  return `upi://pay?${params.toString()}`;
+  const pa  = settings.upiId;                            // keep @ as-is
+  const pn  = encodeURIComponent(settings.upiName || 'Ludo Arena');
+  const am  = amountRupees.toFixed(2);
+  const cu  = 'INR';
+  const tn  = encodeURIComponent(
+    `${settings.upiNote || 'Ludo Arena Coins'} ${orderReference}`
+  );
+  const tr  = encodeURIComponent(orderReference);
+
+  // Build manually — do NOT use URLSearchParams (it encodes @ in pa)
+  return `upi://pay?pa=${pa}&pn=${pn}&am=${am}&cu=${cu}&tn=${tn}&tr=${tr}`;
 };
 
 /**

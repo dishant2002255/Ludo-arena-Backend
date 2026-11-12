@@ -112,7 +112,9 @@ describe('UPI URL Builder', () => {
     const settings = { upiId: 'test@upi', upiName: 'Test Merchant', upiNote: 'Purchase', coinPriceRupees: 1 };
     const url = buildUpiUrl(settings, 200, 'LA-TEST-001');
     expect(url).toContain('upi://pay');
-    expect(url).toContain('pa=test%40upi');
+    // @ must NOT be encoded in pa param — UPI apps reject %40
+    expect(url).toContain('pa=test@upi');
+    expect(url).not.toContain('pa=test%40upi');
     expect(url).toContain('am=200.00');
     expect(url).toContain('cu=INR');
     expect(url).toContain('tr=LA-TEST-001');
