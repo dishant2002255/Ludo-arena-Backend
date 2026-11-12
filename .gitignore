@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Environment variables — NEVER commit these
+.env
+.env.local
+.env.development
+.env.production
+*.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Uploads (user-generated content — not part of codebase)
+uploads/banners/*
+uploads/screenshots/*
+# Keep the directory structure
+!uploads/banners/.gitkeep
+!uploads/screenshots/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.sw?
+
+# Build/dist
+dist/
+
+# Testing coverage
+coverage/
+.nyc_output/
+
+# Misc
+*.tsbuildinfo
