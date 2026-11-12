@@ -26,6 +26,9 @@ const paymentRoutes = require('./routes/payment.routes');
 const app = express();
 const server = http.createServer(app);
 
+// Trust Render/Vercel proxy (required for rate limiting behind load balancers)
+app.set('trust proxy', 1);
+
 // Parse comma-separated allowed origins
 const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
   .split(',')
@@ -48,7 +51,8 @@ connectDB();
 // Security middleware
 app.use(
   helmet({
-    contentSecurityPolicy: false, // Relax for development
+    contentSecurityPolicy: process.env.NODE_ENV === 'production' ? undefined : false,
+    crossOriginEmbedderPolicy: false,
   })
 );
 
