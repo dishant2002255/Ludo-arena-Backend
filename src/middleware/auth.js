@@ -2,9 +2,28 @@ const { verifyToken } = require('../utils/jwt');
 const User = require('../models/User');
 const { error } = require('../utils/apiResponse');
 
+/**
+ * Extract token from request.
+ * Priority: 1) HTTP-only cookie, 2) Authorization: Bearer header
+ * The Bearer fallback is needed when cross-origin cookies are blocked
+ * (e.g. some browsers block SameSite=None on certain configs).
+ */
+const extractToken = (req) => {
+  // 1. HTTP-only cookie (preferred)
+  if (req.cookies?.token) return req.cookies.token;
+
+  // 2. Authorization header fallback
+  const authHeader = req.headers?.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.slice(7);
+  }
+
+  return null;
+};
+
 const authenticate = async (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+    const token = extractToken(req);
     if (!token) {
       return error(res, 'Authentication required', 401);
     }
@@ -42,7 +61,7 @@ const requireAdmin = (req, res, next) => {
 
 const optionalAuth = async (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+    const token = extractToken(req);
     if (token) {
       const decoded = verifyToken(token);
       const user = await User.findById(decoded.id).select('-password');

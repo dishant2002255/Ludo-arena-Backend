@@ -34,6 +34,7 @@ const register = async (req, res) => {
     return success(
       res,
       {
+        token,   // also returned in body for cross-origin Bearer fallback
         user: {
           _id: user._id,
           username: user.username,
@@ -78,6 +79,7 @@ const login = async (req, res) => {
 
     logger.info({ userId: user._id }, 'User logged in');
     return success(res, {
+      token,   // also returned in body for cross-origin Bearer fallback
       user: {
         _id: user._id,
         username: user.username,

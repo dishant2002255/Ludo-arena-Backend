@@ -8,7 +8,7 @@ const logger = require('../utils/logger');
  */
 const socketAuth = async (socket, next) => {
   try {
-    // Try auth object first, then parse cookies
+    // Try auth object first, then cookie header, then auth.token
     let token = socket.handshake.auth?.token;
 
     if (!token) {
@@ -16,6 +16,12 @@ const socketAuth = async (socket, next) => {
       const cookieHeader = socket.handshake.headers?.cookie || '';
       const match = cookieHeader.match(/token=([^;]+)/);
       if (match) token = match[1];
+    }
+
+    // Also accept Authorization: Bearer header
+    if (!token) {
+      const authHeader = socket.handshake.headers?.authorization || '';
+      if (authHeader.startsWith('Bearer ')) token = authHeader.slice(7);
     }
 
     if (!token) {

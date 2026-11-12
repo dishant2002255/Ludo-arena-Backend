@@ -14,17 +14,19 @@ const setCookieToken = (res, token) => {
   const isProduction = process.env.NODE_ENV === 'production';
   res.cookie('token', token, {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    secure: true,            // Always true — Render and Vercel both use HTTPS
+    sameSite: 'none',        // Required for cross-origin (Vercel frontend ↔ Render backend)
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: '/',
   });
 };
 
 const clearCookieToken = (res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    secure: true,
+    sameSite: 'none',
+    path: '/',
   });
 };
 
