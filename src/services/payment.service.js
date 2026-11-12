@@ -14,6 +14,7 @@
  */
 
 const { v4: uuidv4 } = require('uuid');
+const QRCode = require('qrcode');
 const PaymentOrder = require('../models/PaymentOrder');
 const SystemSettings = require('../models/SystemSettings');
 const Notification = require('../models/Notification');
@@ -111,9 +112,27 @@ const initiatePayment = async (userId, coinsRequested, upiPlatform = 'other') =>
   // Build UPI deep link (standard UPI URL scheme)
   const upiUrl = buildUpiUrl(settings, amountRupees, orderReference);
 
+  // Generate QR code from the UPI URL as a base64 data URL
+  // The QR code, when scanned from any UPI app camera, opens the payment directly
+  let qrCodeDataUrl = null;
+  try {
+    qrCodeDataUrl = await QRCode.toDataURL(upiUrl, {
+      errorCorrectionLevel: 'M',
+      type: 'image/png',
+      width: 300,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF',
+      },
+    });
+  } catch (qrErr) {
+    logger.warn({ qrErr }, 'QR code generation failed — continuing without QR');
+  }
+
   logger.info({ userId, orderReference, coinsRequested, amountRupees }, 'Payment initiated');
 
-  return { order, upiUrl, settings };
+  return { order, upiUrl, qrCodeDataUrl, settings };
 };
 
 /**

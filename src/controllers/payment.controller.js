@@ -59,9 +59,6 @@ const initiate = async (req, res) => {
 
     const result = await initiatePayment(req.user._id, parseInt(coinsRequested), upiPlatform || 'other');
 
-    // Build app-specific deep links
-    const appLinks = getAppDeepLinks(result.upiUrl);
-
     return success(res, {
       order: {
         _id: result.order._id,
@@ -72,10 +69,11 @@ const initiate = async (req, res) => {
         expiresAt: result.order.expiresAt,
       },
       upiUrl: result.upiUrl,
-      appLinks,
+      qrCodeDataUrl: result.qrCodeDataUrl,   // base64 PNG for QR display
+      upiId: result.settings.upiId,
       upiName: result.settings.upiName,
-      instructions: `Pay ₹${result.order.amountRupees} to ${result.settings.upiName || 'Ludo Arena'} via any UPI app. Use reference: ${result.order.orderReference}`,
-    }, 'Payment initiated. Complete payment in your UPI app.');
+      instructions: `Scan the QR code or pay ₹${result.order.amountRupees} to UPI ID: ${result.settings.upiId}. Use reference: ${result.order.orderReference}`,
+    }, 'Payment initiated. Scan the QR code or use the UPI ID to complete payment.');
   } catch (err) {
     if (err.message === 'PAYMENT_NOT_ACTIVE') {
       return error(res, 'Coin purchases are not currently available. Please use the free coin request feature.', 503);
