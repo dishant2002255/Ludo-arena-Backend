@@ -89,7 +89,7 @@ const tournamentSchema = new mongoose.Schema(
         'cancelled',
       ],
       default: 'draft',
-      index: true,
+      // index defined below via schema.index({ status: 1 }) — not duplicated here
     },
 
     // ── External Room Credentials (published by admin) ────────────────

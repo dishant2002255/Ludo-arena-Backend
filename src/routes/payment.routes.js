@@ -5,6 +5,7 @@ const {
   getPublicSettings,
   initiate,
   notifyAdmin,
+  uploadScreenshotHandler,
   getMyOrders,
   getOrderStatus,
   adminGetPending,
@@ -16,6 +17,7 @@ const {
   adminUpdateSettings,
 } = require('../controllers/payment.controller');
 const { authenticate, requireAdmin } = require('../middleware/auth');
+const { uploadScreenshot, handleUploadError } = require('../middleware/upload');
 
 // Rate limit payment initiation: max 3 per 10 minutes
 const paymentLimiter = rateLimit({
@@ -31,6 +33,12 @@ router.get('/settings', getPublicSettings);
 // ─── Authenticated user ───────────────────────────────────────────────────────
 router.post('/initiate',          authenticate, paymentLimiter, initiate);
 router.post('/notify/:orderId',   authenticate, notifyAdmin);
+router.post('/screenshot/:orderId',
+  authenticate,
+  uploadScreenshot.single('screenshot'),
+  handleUploadError,
+  uploadScreenshotHandler
+);
 router.get('/my-orders',          authenticate, getMyOrders);
 router.get('/order/:orderId',     authenticate, getOrderStatus);
 

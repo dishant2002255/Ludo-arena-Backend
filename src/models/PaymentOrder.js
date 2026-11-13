@@ -49,7 +49,7 @@ const paymentOrderSchema = new mongoose.Schema(
       type: String,
       enum: ['pending', 'admin_notified', 'approved', 'rejected', 'expired'],
       default: 'pending',
-      index: true,
+      // index defined below via schema.index({ status: 1 }) — not duplicated here
     },
 
     // UPI platform user selected
@@ -75,6 +75,11 @@ const paymentOrderSchema = new mongoose.Schema(
     adminAlarmActive: { type: Boolean, default: true },  // true = alarm ringing
     adminAlarmDismissedAt: { type: Date, default: null },
 
+    // Payment screenshot submitted by user as proof
+    screenshotUrl: { type: String, default: null },
+    screenshotOriginalName: { type: String, default: null },
+    screenshotSubmittedAt: { type: Date, default: null },
+
     // Auto-expire pending orders after 30 minutes
     expiresAt: {
       type: Date,
@@ -86,7 +91,7 @@ const paymentOrderSchema = new mongoose.Schema(
 
 paymentOrderSchema.index({ user: 1, status: 1 });
 paymentOrderSchema.index({ createdAt: -1 });
-paymentOrderSchema.index({ orderReference: 1 });
+// Note: orderReference has unique:true on field — no separate index needed
 // TTL index to auto-expire abandoned orders
 paymentOrderSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0, partialFilterExpression: { status: 'pending' } });
 

@@ -190,8 +190,7 @@ const getAdminMatches = async (req, res) => {
 };
 
 // Rooms
-const getRooms = async (req, res) => {
-  try {
+const getRooms = async (req, res) => {  try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
@@ -451,6 +450,45 @@ const sendNotification = async (req, res) => {
   }
 };
 
+// Publish Ludo King room credentials for a Classic Play room
+const publishClassicRoomCredentials = async (req, res) => {
+  try {
+    const { externalRoomId, externalRoomPassword } = req.body;
+    if (!externalRoomId?.trim()) return error(res, 'Room ID is required', 400);
+
+    const room = await Room.findOne({ roomId: req.params.roomId });
+    if (!room) return error(res, 'Room not found', 404);
+    if (!['full', 'waiting', 'in_progress'].includes(room.status)) {
+      return error(res, 'Room is not in a valid state to publish credentials', 400);
+    }
+
+    room.externalRoomId = externalRoomId.trim();
+    room.externalRoomPassword = externalRoomPassword?.trim() || '';
+    room.externalRoomPublishedAt = new Date();
+    room.externalRoomPublishedBy = req.user._id;
+    await room.save();
+
+    await logAction(req.user._id, 'publish_classic_room_credentials', 'room', room._id, {
+      roomId: room.roomId, externalRoomId: externalRoomId.trim(),
+    }, req.ip);
+
+    // Notify all players in the room via socket
+    const { getIo } = require('../socket/socketInstance');
+    const io = getIo();
+    if (io) {
+      io.to(room.roomId).emit('room:credentials-published', {
+        roomId: room.roomId,
+        externalRoomId: room.externalRoomId,
+        externalRoomPassword: room.externalRoomPassword,
+      });
+    }
+
+    return success(res, { room }, 'Room credentials published');
+  } catch (err) {
+    return error(res, err.message || 'Failed to publish credentials', 500);
+  }
+};
+
 module.exports = {
   getDashboard,
   getUsers,
@@ -473,4 +511,5 @@ module.exports = {
   // Wallet analytics
   getWalletDashboard,
   getUserTransactions,
+  publishClassicRoomCredentials,
 };

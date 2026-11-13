@@ -20,6 +20,7 @@ const {
   handleRejectCoinRequest,
   getWalletDashboard,
   getUserTransactions,
+  publishClassicRoomCredentials,
 } = require('../controllers/admin.controller');
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const validate = require('../middleware/validate');
@@ -44,6 +45,7 @@ router.delete('/matches/:id', deleteMatch);
 
 // Rooms
 router.get('/rooms', getRooms);
+router.post('/rooms/:roomId/publish-credentials', publishClassicRoomCredentials);
 
 // Results
 router.get('/results', getResults);

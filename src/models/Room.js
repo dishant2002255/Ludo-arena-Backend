@@ -57,6 +57,12 @@ const roomSchema = new mongoose.Schema(
     entryCoins: { type: Number, required: true },
     winnerReward: { type: Number, required: true },
     rewardDistributed: { type: Boolean, default: false },
+
+    // External Ludo King room credentials (admin sets these after 4 players join)
+    externalRoomId: { type: String, trim: true, default: '' },
+    externalRoomPassword: { type: String, trim: true, default: '' },
+    externalRoomPublishedAt: { type: Date, default: null },
+    externalRoomPublishedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   },
   { timestamps: true }
 );

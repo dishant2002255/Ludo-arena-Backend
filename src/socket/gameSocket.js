@@ -90,19 +90,24 @@ const registerGameHandlers = (io, socket) => {
 
       logger.info({ roomId, userId, username: socket.user.username }, 'Player joined room socket');
 
-      // If room is full and game not started, start it
+      // If room is full and game not started, notify admin and wait for room credentials
       if (updatedRoom.status === 'full') {
-        try {
-          const { room: startedRoom, gameState } = await startGame(roomId);
-          io.to(roomId).emit('game:start', { room: startedRoom, gameState });
-          logger.info({ roomId }, 'Game auto-started');
-
-          // Start turn timer for first player
-          const timeoutSeconds = startedRoom.match?.rules?.turnTimeoutSeconds || 30;
-          startTurnTimer(io, roomId, timeoutSeconds);
-        } catch (startErr) {
-          logger.warn({ err: startErr }, 'Game auto-start failed');
+        // Notify admin that 4 players are ready
+        const { getIo } = require('../socket/socketInstance');
+        const ioInstance = getIo();
+        if (ioInstance) {
+          ioInstance.to('admin:room').emit('room:players-ready', {
+            roomId: updatedRoom.roomId,
+            matchName: updatedRoom.match?.name || 'Match',
+            players: updatedRoom.players.map(p => ({
+              username: p.user?.username,
+              color: p.color,
+            })),
+          });
         }
+        // Show players the waiting message — game will start when admin publishes Ludo King room ID
+        io.to(roomId).emit('room:updated', { room: updatedRoom });
+        logger.info({ roomId }, 'Room full — waiting for admin to publish Ludo King room ID');
       }
 
       // Send current game state for reconnection

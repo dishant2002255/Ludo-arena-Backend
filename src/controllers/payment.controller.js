@@ -100,9 +100,32 @@ const notifyAdmin = async (req, res) => {
 };
 
 /**
- * GET /api/payment/my-orders
- * User fetches their own payment history.
+ * POST /api/payment/screenshot/:orderId
+ * User uploads their payment screenshot as proof.
+ * This is called with "I Have Paid" — before admin verification.
  */
+const uploadScreenshotHandler = async (req, res) => {
+  try {
+    if (!req.file) return error(res, 'Screenshot is required', 400);
+
+    const order = await PaymentOrder.findOne({ _id: req.params.orderId, user: req.user._id });
+    if (!order) return error(res, 'Order not found', 404);
+    if (!['pending', 'admin_notified'].includes(order.status)) {
+      return error(res, 'Order cannot be updated at this stage', 400);
+    }
+
+    order.screenshotUrl = `/uploads/screenshots/${req.file.filename}`;
+    order.screenshotOriginalName = req.file.originalname;
+    order.screenshotSubmittedAt = new Date();
+    await order.save();
+
+    return success(res, {
+      screenshotUrl: order.screenshotUrl,
+    }, 'Screenshot uploaded successfully');
+  } catch (err) {
+    return error(res, err.message || 'Upload failed', 500);
+  }
+};
 const getMyOrders = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -259,6 +282,7 @@ module.exports = {
   getPublicSettings,
   initiate,
   notifyAdmin,
+  uploadScreenshotHandler,
   getMyOrders,
   getOrderStatus,
   adminGetPending,

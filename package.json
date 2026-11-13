@@ -7,6 +7,7 @@
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "seed": "node src/seeds/seed.js",
+    "alive": "node alive.js",
     "test": "jest --runInBand --forceExit --testTimeout=30000",
     "test:unit": "jest tests/unit --runInBand --forceExit",
     "test:integration": "jest tests/integration --runInBand --forceExit --testTimeout=30000"
