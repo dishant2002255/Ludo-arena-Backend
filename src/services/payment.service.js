@@ -136,16 +136,24 @@ const initiatePayment = async (userId, coinsRequested, upiPlatform = 'other') =>
 };
 
 /**
- * Called when user confirms they have opened their UPI app.
+ * Called when user confirms they have paid.
  * Triggers the persistent admin alarm.
+ * Idempotent — safe to call multiple times.
  */
 const notifyAdminOfPayment = async (orderId, userId) => {
   const order = await PaymentOrder.findOne({ _id: orderId, user: userId })
     .populate('user', 'username email');
 
   if (!order) throw new Error('Order not found');
-  if (!['pending', 'admin_notified'].includes(order.status)) {
-    throw new Error('Order is not in a valid state');
+
+  // Already notified — just return without re-firing alarm
+  if (order.status === 'admin_notified') {
+    logger.info({ orderId }, 'Admin already notified — skipping duplicate');
+    return order;
+  }
+
+  if (order.status !== 'pending') {
+    throw new Error(`Order cannot be notified in status: ${order.status}`);
   }
 
   order.status = 'admin_notified';

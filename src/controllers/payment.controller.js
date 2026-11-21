@@ -15,6 +15,7 @@ const {
   getPaymentSettings,
   getAppDeepLinks,
 } = require('../services/payment.service');
+const PaymentOrder = require('../models/PaymentOrder');   // ← was missing — caused "PaymentOrder is not defined"
 const SystemSettings = require('../models/SystemSettings');
 const { success, error, paginated } = require('../utils/apiResponse');
 const logger = require('../utils/logger');
@@ -102,7 +103,7 @@ const notifyAdmin = async (req, res) => {
 /**
  * POST /api/payment/screenshot/:orderId
  * User uploads their payment screenshot as proof.
- * This is called with "I Have Paid" — before admin verification.
+ * Also triggers admin notification if not already done.
  */
 const uploadScreenshotHandler = async (req, res) => {
   try {
@@ -123,6 +124,7 @@ const uploadScreenshotHandler = async (req, res) => {
       screenshotUrl: order.screenshotUrl,
     }, 'Screenshot uploaded successfully');
   } catch (err) {
+    logger.error({ err }, 'Screenshot upload error');
     return error(res, err.message || 'Upload failed', 500);
   }
 };
