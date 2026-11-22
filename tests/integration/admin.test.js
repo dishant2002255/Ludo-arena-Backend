@@ -82,8 +82,8 @@ describe('Admin route authorization', () => {
 describe('GET /api/admin/dashboard', () => {
   test('returns platform statistics', async () => {
     const admin = await createAdmin();
-    await createUser({ username: 'u1', email: 'u1@test.com' });
-    await createUser({ username: 'u2', email: 'u2@test.com' });
+    await createUser({ username: 'usr1', email: 'usr1@test.com' });
+    await createUser({ username: 'usr2', email: 'usr2@test.com' });
     const cookie = await loginUser(admin.email);
 
     const res = await request(app).get('/api/admin/dashboard').set('Cookie', cookie);
@@ -171,7 +171,7 @@ describe('DELETE /api/admin/matches/:id', () => {
 describe('GET /api/admin/users', () => {
   test('returns user list', async () => {
     const admin = await createAdmin();
-    await createUser({ username: 'listuser1', email: 'lu1@test.com' });
+    await createUser({ username: 'listuser1', email: 'lusr1@test.com' });
     const cookie = await loginUser(admin.email);
 
     const res = await request(app).get('/api/admin/users').set('Cookie', cookie);
@@ -238,53 +238,35 @@ describe('PATCH /api/admin/users/:id/toggle-block', () => {
 // ─── Coin Adjustment ─────────────────────────────────────────────────────────
 
 describe('POST /api/admin/coins/adjust', () => {
-  test('admin can credit coins to a user', async () => {
+  test('manual coin adjustments are disabled in the real-money economy', async () => {
     const admin = await createAdmin();
     const user = await createUser({ username: 'coinuser', email: 'coin@test.com', walletBalance: 100 });
     const cookie = await loginUser(admin.email);
-
     const res = await request(app).post('/api/admin/coins/adjust').set('Cookie', cookie).send({
       userId: user._id.toString(),
       amount: 200,
       reason: 'Test credit',
     });
-    expect(res.status).toBe(200);
-
+    expect(res.status).toBe(403);
     const User = require('../../src/models/User');
     const updated = await User.findById(user._id);
-    expect(updated.walletBalance).toBe(300);
+    expect(updated.walletBalance).toBe(100); // unchanged
   });
-
-  test('admin can debit coins from a user', async () => {
+  test('returns 403 even for valid payloads', async () => {
     const admin = await createAdmin();
     const user = await createUser({ username: 'debituser', email: 'debit@test.com', walletBalance: 500 });
     const cookie = await loginUser(admin.email);
-
     const res = await request(app).post('/api/admin/coins/adjust').set('Cookie', cookie).send({
       userId: user._id.toString(),
       amount: -100,
       reason: 'Test debit',
     });
-    expect(res.status).toBe(200);
-
+    expect(res.status).toBe(403);
     const User = require('../../src/models/User');
     const updated = await User.findById(user._id);
-    expect(updated.walletBalance).toBe(400);
-  });
-
-  test('requires userId, amount, and reason', async () => {
-    const admin = await createAdmin();
-    const cookie = await loginUser(admin.email);
-
-    const res = await request(app).post('/api/admin/coins/adjust').set('Cookie', cookie).send({
-      amount: 50,
-    });
-    expect(res.status).toBe(400);
+    expect(updated.walletBalance).toBe(500); // unchanged
   });
 });
-
-// ─── Rooms and Results ────────────────────────────────────────────────────────
-
 describe('GET /api/admin/rooms', () => {
   test('returns rooms list', async () => {
     const admin = await createAdmin();
@@ -317,3 +299,4 @@ describe('GET /api/admin/logs', () => {
     expect(Array.isArray(res.body.data)).toBe(true);
   });
 });
+

@@ -39,7 +39,8 @@ const emitWalletUpdate = (userId, payload) => {
  */
 const emitPaymentAlarm = (order) => {
   if (!_io) return;
-  _io.to('admin:room').emit('payment:alarm', {
+  const subAdminId = order.subAdmin?._id || order.subAdmin;
+  const payload = {
     orderId: order._id,
     orderReference: order.orderReference,
     username: order.user?.username || 'User',
@@ -48,15 +49,24 @@ const emitPaymentAlarm = (order) => {
     amountRupees: order.amountRupees,
     upiPlatform: order.upiPlatform,
     createdAt: order.createdAt,
-  });
+  };
+  // Main Admin dashboard alarm
+  _io.to('admin:room').emit('payment:alarm', payload);
+  // Sub-Admin owning this order
+  if (subAdminId) {
+    _io.to(`subadmin:${subAdminId}`).emit('payment:alarm', payload);
+  }
 };
 
 /**
  * Tell admin sockets to stop the alarm for a specific order.
  */
-const dismissPaymentAlarm = (orderId) => {
+const dismissPaymentAlarm = (orderId, subAdminId = null) => {
   if (!_io) return;
   _io.to('admin:room').emit('payment:alarm-dismissed', { orderId });
+  if (subAdminId) {
+    _io.to(`subadmin:${subAdminId}`).emit('payment:alarm-dismissed', { orderId });
+  }
 };
 
 /**

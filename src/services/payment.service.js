@@ -1,18 +1,17 @@
 /**
- * Payment Service — Manual UPI coin purchase flow.
+ * Payment Service — Sub-Admin scoped UPI coin purchase flow.
  *
  * HOW IT WORKS (no automated payment processing):
- *  1. User initiates purchase → PaymentOrder created
- *  2. User is shown UPI payment details (admin's UPI ID)
- *  3. User pays externally via their UPI app
- *  4. Admin receives a persistent alarm notification
+ *  1. User picks a Sub-Admin and initiates purchase → PaymentOrder created
+ *  2. User is shown the SUB-ADMIN's UPI details and pays directly to them
+ *  3. User pays externally via their UPI app (screenshot proof optional)
+ *  4. Sub-Admin (or Main Admin) receives a persistent alarm notification
  *  5. Admin verifies receipt in their own bank app
- *  6. Admin approves the order → coins credited to user
+ *  6. Approval deducts Sub-Admin coinStock and credits the user's
+ *     UserSubWallet via subAdmin.service.approveCoinPurchase
  *
- * STATUS: Infrastructure ready. Payment processing NOT active until
- * upiEnabled = true in SystemSettings AND a valid UPI ID is configured.
+ * INVARIANT: 1 Coin = ₹1. No free coins anywhere.
  */
-
 const { v4: uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 const PaymentOrder = require('../models/PaymentOrder');
@@ -20,7 +19,7 @@ const SystemSettings = require('../models/SystemSettings');
 const Notification = require('../models/Notification');
 const AdminLog = require('../models/AdminLog');
 const User = require('../models/User');
-const { adjustWallet } = require('./wallet.service');
+const subAdminService = require('./subAdmin.service');
 const {
   emitNotification,
   emitWalletUpdate,
@@ -51,35 +50,24 @@ const logAdminAction = async (adminId, action, targetId, details, ip = '') => {
   } catch {}
 };
 
+const isMainAdmin = (u) => ['admin', 'main_admin'].includes(u?.role);
+
 // ─── Get Settings ─────────────────────────────────────────────────────────────
 
-const getPaymentSettings = async () => {
-  return SystemSettings.getSettings();
-};
+const getPaymentSettings = async () => SystemSettings.getSettings();
 
-// ─── Initiate Purchase ────────────────────────────────────────────────────────
+// ─── Initiate Purchase (Sub-Admin scoped) ─────────────────────────────────────
 
 /**
- * User initiates a coin purchase request.
- * Returns the order and UPI payment details.
- * Does NOT process any real payment.
+ * User initiates a coin purchase from a specific Sub-Admin.
+ * Returns the order and the SUB-ADMIN's UPI payment details.
  */
-const initiatePayment = async (userId, coinsRequested, upiPlatform = 'other') => {
+const initiatePayment = async (userId, subAdminId, coinsRequested, upiPlatform = 'other') => {
   const settings = await getPaymentSettings();
-
-  // Guard: payment must be enabled by admin
-  if (!settings.upiEnabled) {
-    throw new Error('PAYMENT_NOT_ACTIVE');
-  }
-
-  if (!settings.upiId) {
-    throw new Error('UPI not configured. Contact admin.');
-  }
 
   if (coinsRequested < settings.minimumPurchaseCoins) {
     throw new Error(`Minimum purchase is ${settings.minimumPurchaseCoins} coins (₹${settings.minimumPurchaseCoins})`);
   }
-
   if (coinsRequested > settings.maximumPurchaseCoins) {
     throw new Error(`Maximum purchase is ${settings.maximumPurchaseCoins} coins`);
   }
@@ -88,18 +76,40 @@ const initiatePayment = async (userId, coinsRequested, upiPlatform = 'other') =>
   if (!user) throw new Error('User not found');
   if (user.isBlocked) throw new Error('Account blocked');
 
-  // Check if user already has a pending order
-  const existingPending = await PaymentOrder.findOne({ user: userId, status: { $in: ['pending', 'admin_notified'] } });
-  if (existingPending) {
-    throw new Error('You already have a pending payment. Please wait for admin verification or the order to expire.');
+  // Validate Sub-Admin
+  const subAdmin = await User.findById(subAdminId);
+  if (!subAdmin || subAdmin.role !== 'sub_admin') {
+    throw new Error('Sub-Admin not found');
+  }
+  if (subAdmin.isBlocked || subAdmin.subAdminInfo?.isActive === false) {
+    throw new Error('This Sub-Admin is currently unavailable');
+  }
+  if (!subAdmin.subAdminInfo.upiEnabled || !subAdmin.subAdminInfo.upiId) {
+    throw new Error('This Sub-Admin has not enabled UPI payments yet');
+  }
+  if (subAdmin.subAdminInfo.coinStock < coinsRequested) {
+    throw new Error(
+      `Sub-Admin has insufficient coin stock (${subAdmin.subAdminInfo.coinStock}). Please try a smaller amount or another Sub-Admin.`
+    );
   }
 
-  const amountRupees = coinsRequested * settings.coinPriceRupees;
+  // One pending order per (user, subAdmin)
+  const existingPending = await PaymentOrder.findOne({
+    user: userId,
+    subAdmin: subAdminId,
+    status: { $in: ['pending', 'admin_notified'] },
+  });
+  if (existingPending) {
+    throw new Error('You already have a pending payment with this Sub-Admin. Please wait for verification or the order to expire.');
+  }
+
+  const amountRupees = coinsRequested * settings.coinPriceRupees; // 1:1
   const orderReference = generateOrderReference();
   const expiresAt = new Date(Date.now() + settings.orderExpiryMinutes * 60 * 1000);
 
   const order = await PaymentOrder.create({
     user: userId,
+    subAdmin: subAdminId,
     coinsRequested,
     amountRupees,
     orderReference,
@@ -109,11 +119,17 @@ const initiatePayment = async (userId, coinsRequested, upiPlatform = 'other') =>
     expiresAt,
   });
 
-  // Build UPI deep link (standard UPI URL scheme)
-  const upiUrl = buildUpiUrl(settings, amountRupees, orderReference);
+  // Build UPI deep link from the SUB-ADMIN's UPI details
+  const upiUrl = buildUpiUrl(
+    {
+      upiId: subAdmin.subAdminInfo.upiId,
+      upiName: subAdmin.subAdminInfo.upiName || subAdmin.subAdminInfo.displayName,
+      upiNote: subAdmin.subAdminInfo.upiNote || 'Ludo Arena Coins',
+    },
+    amountRupees,
+    orderReference
+  );
 
-  // Generate QR code from the UPI URL as a base64 data URL
-  // The QR code, when scanned from any UPI app camera, opens the payment directly
   let qrCodeDataUrl = null;
   try {
     qrCodeDataUrl = await QRCode.toDataURL(upiUrl, {
@@ -121,37 +137,32 @@ const initiatePayment = async (userId, coinsRequested, upiPlatform = 'other') =>
       type: 'image/png',
       width: 300,
       margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF',
-      },
+      color: { dark: '#000000', light: '#FFFFFF' },
     });
   } catch (qrErr) {
     logger.warn({ qrErr }, 'QR code generation failed — continuing without QR');
   }
 
-  logger.info({ userId, orderReference, coinsRequested, amountRupees }, 'Payment initiated');
-
-  return { order, upiUrl, qrCodeDataUrl, settings };
+  logger.info({ userId, subAdminId, orderReference, coinsRequested, amountRupees }, 'Payment initiated');
+  return { order, upiUrl, qrCodeDataUrl, subAdmin };
 };
 
 /**
  * Called when user confirms they have paid.
- * Triggers the persistent admin alarm.
+ * Triggers persistent alarm to the SUB-ADMIN (and Main Admin).
  * Idempotent — safe to call multiple times.
  */
 const notifyAdminOfPayment = async (orderId, userId) => {
   const order = await PaymentOrder.findOne({ _id: orderId, user: userId })
-    .populate('user', 'username email');
-
+    .populate('user', 'username email')
+    .populate('subAdmin', 'subAdminInfo.displayName');
   if (!order) throw new Error('Order not found');
+  if (!order.subAdmin) throw new Error('Order is missing Sub-Admin scope');
 
-  // Already notified — just return without re-firing alarm
   if (order.status === 'admin_notified') {
-    logger.info({ orderId }, 'Admin already notified — skipping duplicate');
+    logger.info({ orderId }, 'Sub-Admin already notified — skipping duplicate');
     return order;
   }
-
   if (order.status !== 'pending') {
     throw new Error(`Order cannot be notified in status: ${order.status}`);
   }
@@ -159,12 +170,13 @@ const notifyAdminOfPayment = async (orderId, userId) => {
   order.status = 'admin_notified';
   await order.save();
 
-  // Create persistent admin notification
+  const subAdminName = order.subAdmin?.subAdminInfo?.displayName || 'Sub-Admin';
+
   await Notification.create({
-    recipient: null, // broadcast to all admins via admin:room socket
+    recipient: order.subAdmin._id,
     type: 'payment_alarm',
     title: '💰 Payment Verification Required',
-    message: `${order.user.username} has initiated a UPI payment of ₹${order.amountRupees} for ${order.coinsRequested} coins. Order: ${order.orderReference}`,
+    message: `${order.user.username} has paid ₹${order.amountRupees} for ${order.coinsRequested} coins via your UPI ID. Order: ${order.orderReference}`,
     sentBy: order.user._id,
     data: {
       orderId: order._id,
@@ -172,80 +184,78 @@ const notifyAdminOfPayment = async (orderId, userId) => {
       amountRupees: order.amountRupees,
       coinsRequested: order.coinsRequested,
       upiPlatform: order.upiPlatform,
+      screenshotUrl: order.screenshotUrl,
     },
   });
 
-  // Fire persistent alarm to admin:room — keeps playing until dismissed
   emitPaymentAlarm(order);
 
-  logger.info({ orderId, orderReference: order.orderReference }, 'Admin payment alarm fired');
+  logger.info({ orderId, orderReference: order.orderReference }, 'Sub-Admin payment alarm fired');
   return order;
 };
 
-// ─── Admin Actions ────────────────────────────────────────────────────────────
+// ─── Admin Actions (Sub-Admin scoped) ─────────────────────────────────────────
 
 /**
- * Admin approves payment → coins credited to user wallet.
+ * Approve payment — Sub-Admin (own orders) or Main Admin (any order).
+ * Credits the user's UserSubWallet and deducts Sub-Admin coinStock
+ * via subAdminService.approveCoinPurchase (revolving stock + ledger).
  */
-const approvePayment = async (orderId, adminId, adminRemarks = '', ip = '') => {
-  const order = await PaymentOrder.findById(orderId).populate('user', 'username email');
+const approvePayment = async (orderId, actingAdmin, adminRemarks = '', ip = '') => {
+  const adminId = actingAdmin._id;
+  const order = await PaymentOrder.findById(orderId)
+    .populate('user', 'username email')
+    .populate('subAdmin', 'subAdminInfo.displayName');
   if (!order) throw new Error('Order not found');
+  if (!order.subAdmin) throw new Error('Order is missing Sub-Admin scope');
   if (order.status === 'approved') throw new Error('Already approved');
   if (order.status === 'rejected') throw new Error('Order was rejected');
   if (order.status === 'expired') throw new Error('Order has expired');
 
-  // Credit coins
-  const tx = await adjustWallet(
-    order.user._id,
-    order.coinsRequested,
-    'coin_purchase',
-    `UPI coin purchase — ₹${order.amountRupees} — ${order.orderReference}`,
-    {
-      adjustedBy: adminId,
-      idempotencyKey: `coin_purchase_${orderId}`,
-      paymentOrderId: order._id,
-    }
-  );
+  // Scope check: sub-admins may only approve their own orders
+  if (!isMainAdmin(actingAdmin) && String(actingAdmin._id) !== String(order.subAdmin._id)) {
+    throw new Error('You can only approve payment orders under your own Sub-Admin account');
+  }
+
+  // Credit user sub-wallet & deduct stock (idempotent, audited)
+  const result = await subAdminService.approveCoinPurchase(order, adminId);
 
   // Update order
   order.status = 'approved';
   order.adminRemarks = adminRemarks;
   order.reviewedBy = adminId;
   order.reviewedAt = new Date();
-  order.walletTransaction = tx._id;
+  order.walletTransaction = result.tx._id;
   order.adminAlarmActive = false;
   order.adminAlarmDismissedAt = new Date();
   await order.save();
 
   await logAdminAction(adminId, 'approve_payment', order._id, {
     orderReference: order.orderReference,
+    subAdmin: order.subAdmin._id,
     amountRupees: order.amountRupees,
     coinsRequested: order.coinsRequested,
     adminRemarks,
   }, ip);
 
-  // Dismiss alarm on all admin sockets
-  dismissPaymentAlarm(orderId);
+  dismissPaymentAlarm(orderId, order.subAdmin._id);
 
-  // Notify user — real-time wallet update
   const updatedUser = await User.findById(order.user._id).select('walletBalance');
   emitWalletUpdate(order.user._id.toString(), {
     newBalance: updatedUser.walletBalance,
     amount: order.coinsRequested,
   });
 
-  // Notify user with toast + redirect trigger
   const userNotif = await Notification.create({
     recipient: order.user._id,
     type: 'payment_approved',
     title: '✅ Payment Verified!',
-    message: `Your payment of ₹${order.amountRupees} has been verified. ${order.coinsRequested} coins have been added to your wallet!`,
+    message: `Your payment of ₹${order.amountRupees} to ${order.subAdmin.subAdminInfo?.displayName || 'Sub-Admin'} has been verified. ${order.coinsRequested} coins have been added to your wallet!`,
     sentBy: adminId,
     data: { orderId: order._id, coinsAdded: order.coinsRequested },
   });
   emitNotification(order.user._id.toString(), userNotif);
 
-  // Tell user's checkout page to redirect to wallet
   emitPaymentStatusUpdate(order.user._id.toString(), {
     orderId: order._id.toString(),
     status: 'approved',
@@ -254,18 +264,30 @@ const approvePayment = async (orderId, adminId, adminRemarks = '', ip = '') => {
     redirectTo: '/wallet',
   });
 
-  logger.info({ orderId, coinsRequested: order.coinsRequested }, 'Payment approved');
-  return { order, transaction: tx };
+  logger.info({ orderId, subAdminId: order.subAdmin._id, coinsRequested: order.coinsRequested }, 'Payment approved');
+  return { order, transaction: result.tx };
 };
 
 /**
- * Admin rejects payment.
+ * Reject payment — Sub-Admin (own orders) or Main Admin (any order).
+ * No coins move; user is simply told the proof was insufficient.
  */
-const rejectPayment = async (orderId, adminId, adminRemarks = '', ip = '') => {
-  const order = await PaymentOrder.findById(orderId).populate('user', 'username email');
+const rejectPayment = async (orderId, actingAdmin, adminRemarks = '', ip = '') => {
+  const adminId = actingAdmin._id;
+  const order = await PaymentOrder.findById(orderId)
+    .populate('user', 'username email')
+    .populate('subAdmin', 'subAdminInfo.displayName');
   if (!order) throw new Error('Order not found');
+  if (!order.subAdmin) throw new Error('Order is missing Sub-Admin scope');
   if (order.status === 'approved') throw new Error('Cannot reject an approved order');
   if (order.status === 'rejected') throw new Error('Already rejected');
+  if (!adminRemarks || adminRemarks.trim().length < 3) {
+    throw new Error('Rejection remarks are required');
+  }
+
+  if (!isMainAdmin(actingAdmin) && String(actingAdmin._id) !== String(order.subAdmin._id)) {
+    throw new Error('You can only reject payment orders under your own Sub-Admin account');
+  }
 
   order.status = 'rejected';
   order.adminRemarks = adminRemarks;
@@ -280,18 +302,17 @@ const rejectPayment = async (orderId, adminId, adminRemarks = '', ip = '') => {
     adminRemarks,
   }, ip);
 
-  dismissPaymentAlarm(orderId);
+  dismissPaymentAlarm(orderId, order.subAdmin._id);
 
   const userNotif = await Notification.create({
     recipient: order.user._id,
     type: 'payment_rejected',
     title: '❌ Payment Not Verified',
-    message: `Your payment request for ${order.coinsRequested} coins could not be verified.${adminRemarks ? ` Reason: ${adminRemarks}` : ''} Please contact support.`,
+    message: `Your payment request for ${order.coinsRequested} coins could not be verified. Reason: ${adminRemarks} Please contact support.`,
     sentBy: adminId,
     data: { orderId: order._id },
   });
   emitNotification(order.user._id.toString(), userNotif);
-
   emitPaymentStatusUpdate(order.user._id.toString(), {
     orderId: order._id.toString(),
     status: 'rejected',
@@ -305,43 +326,48 @@ const rejectPayment = async (orderId, adminId, adminRemarks = '', ip = '') => {
 /**
  * Admin dismisses alarm without acting (order stays admin_notified).
  */
-const dismissAlarm = async (orderId, adminId) => {
+const dismissAlarm = async (orderId, actingAdmin) => {
   const order = await PaymentOrder.findById(orderId);
   if (!order) throw new Error('Order not found');
-
+  if (!isMainAdmin(actingAdmin) && String(actingAdmin._id) !== String(order.subAdmin)) {
+    throw new Error('You can only dismiss alarms for your own orders');
+  }
   order.adminAlarmActive = false;
   order.adminAlarmDismissedAt = new Date();
   await order.save();
-
-  dismissPaymentAlarm(orderId);
+  dismissPaymentAlarm(orderId, order.subAdmin);
   return order;
 };
 
-// ─── Queries ──────────────────────────────────────────────────────────────────
+// ─── Queries (scoped) ─────────────────────────────────────────────────────────
 
-const getPendingOrders = async (page = 1, limit = 20) => {
+const getPendingOrders = async (scope = {}, page = 1, limit = 20) => {
   const skip = (page - 1) * limit;
+  const base = { status: { $in: ['pending', 'admin_notified'] }, ...scope };
   const [orders, total] = await Promise.all([
-    PaymentOrder.find({ status: { $in: ['pending', 'admin_notified'] } })
+    PaymentOrder.find(base)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate('user', 'username email walletBalance')
+      .populate('subAdmin', 'username subAdminInfo.displayName')
       .lean(),
-    PaymentOrder.countDocuments({ status: { $in: ['pending', 'admin_notified'] } }),
+    PaymentOrder.countDocuments(base),
   ]);
   return { orders, total, page, pages: Math.ceil(total / limit) };
 };
 
-const getAllOrders = async (page = 1, limit = 20, status = '') => {
+const getAllOrders = async (scope = {}, page = 1, limit = 20, status = '') => {
   const skip = (page - 1) * limit;
-  const query = status ? { status } : {};
+  const query = { ...scope };
+  if (status) query.status = status;
   const [orders, total] = await Promise.all([
     PaymentOrder.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate('user', 'username email walletBalance')
+      .populate('subAdmin', 'username subAdminInfo.displayName')
       .populate('reviewedBy', 'username')
       .lean(),
     PaymentOrder.countDocuments(query),
@@ -356,6 +382,7 @@ const getUserOrders = async (userId, page = 1, limit = 20) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
+      .populate('subAdmin', 'username subAdminInfo.displayName')
       .lean(),
     PaymentOrder.countDocuments({ user: userId }),
   ]);
@@ -366,6 +393,7 @@ const getOrderById = async (orderId, userId = null) => {
   const query = userId ? { _id: orderId, user: userId } : { _id: orderId };
   return PaymentOrder.findOne(query)
     .populate('user', 'username email walletBalance')
+    .populate('subAdmin', 'username subAdminInfo.displayName')
     .populate('reviewedBy', 'username')
     .lean();
 };
@@ -380,24 +408,16 @@ const getOrderById = async (orderId, userId = null) => {
  *
  * FORMAT: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=INR&tn=NOTE&tr=REF
  */
-const buildUpiUrl = (settings, amountRupees, orderReference) => {
-  const pa  = settings.upiId;                            // keep @ as-is
-  const pn  = encodeURIComponent(settings.upiName || 'Ludo Arena');
+const buildUpiUrl = (upi, amountRupees, orderReference) => {
+  const pa  = upi.upiId;                                  // keep @ as-is
+  const pn  = encodeURIComponent(upi.upiName || 'Ludo Arena');
   const am  = amountRupees.toFixed(2);
   const cu  = 'INR';
-  const tn  = encodeURIComponent(
-    `${settings.upiNote || 'Ludo Arena Coins'} ${orderReference}`
-  );
+  const tn  = encodeURIComponent(`${upi.upiNote || 'Ludo Arena Coins'} ${orderReference}`);
   const tr  = encodeURIComponent(orderReference);
-
-  // Build manually — do NOT use URLSearchParams (it encodes @ in pa)
   return `upi://pay?pa=${pa}&pn=${pn}&am=${am}&cu=${cu}&tn=${tn}&tr=${tr}`;
 };
 
-/**
- * Returns deep-link URLs for specific UPI apps.
- * These open the respective app directly on mobile.
- */
 const getAppDeepLinks = (upiUrl) => ({
   gpay:    `tez://upi/pay?${upiUrl.split('?')[1]}`,
   phonepe: `phonepe://${upiUrl}`,

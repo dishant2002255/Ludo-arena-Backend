@@ -127,10 +127,68 @@ const getMyCoinRequests = async (req, res) => {
   }
 };
 
+// ─── Sub-Admin economy: active sub-admin list (for user selection) ───────────
+const UserSubWallet = require('../models/UserSubWallet');
+
+const getActiveSubAdmins = async (req, res) => {
+  try {
+    const subAdmins = await User.find({
+      role: 'sub_admin',
+      isBlocked: false,
+      'subAdminInfo.isActive': true,
+    })
+      .select('subAdminInfo.displayName subAdminInfo.upiEnabled subAdminInfo.commissionPercentOverride subAdminInfo.coinStock')
+      .lean();
+
+    return success(
+      res,
+      subAdmins.map((sa) => ({
+        _id: sa._id,
+        displayName: sa.subAdminInfo.displayName,
+        upiEnabled: sa.subAdminInfo.upiEnabled,
+        commissionPercent: sa.subAdminInfo.commissionPercentOverride,
+        hasStock: (sa.subAdminInfo.coinStock || 0) > 0,
+      }))
+    );
+  } catch (err) {
+    return error(res, 'Failed to fetch sub-admins', 500);
+  }
+};
+
+// ─── My per-sub-admin wallets ─────────────────────────────────────────────────
+const getMySubWallets = async (req, res) => {
+  try {
+    const wallets = await UserSubWallet.find({ user: req.user._id })
+      .populate('subAdmin', 'username subAdminInfo.displayName subAdminInfo.isActive')
+      .lean();
+
+    return success(
+      res,
+      wallets.map((w) => ({
+        subAdminId: w.subAdmin?._id,
+        subAdminName: w.subAdmin?.subAdminInfo?.displayName || w.subAdmin?.username || 'Unknown',
+        subAdminActive:
+          w.subAdmin?.subAdminInfo?.isActive !== false && w.subAdmin != null,
+        balance: w.balance,
+        lockedBattleBalance: w.lockedBattleBalance,
+        lockedWithdrawalBalance: w.lockedWithdrawalBalance,
+        totalPurchased: w.totalPurchased,
+        totalWithdrawn: w.totalWithdrawn,
+        totalWagered: w.totalWagered,
+        totalWon: w.totalWon,
+      }))
+    );
+  } catch (err) {
+    return error(res, 'Failed to fetch sub-wallets', 500);
+  }
+};
+
 module.exports = {
   getBalance,
   getHistory,
   claimDaily,
   submitCoinRequest,
   getMyCoinRequests,
+  getActiveSubAdmins,
+  getMySubWallets,
 };

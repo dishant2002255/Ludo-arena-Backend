@@ -6,7 +6,7 @@ const Match = require('../../../src/models/Match');
 
 const createUser = async (overrides = {}) => {
   const defaults = {
-    username: `user_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+    username: `u${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`,
     email: `test_${Date.now()}_${Math.random().toString(36).slice(2, 6)}@test.com`,
     password: 'TestPass123',
     role: 'user',

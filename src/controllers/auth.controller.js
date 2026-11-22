@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const { generateToken, setCookieToken, clearCookieToken } = require('../utils/jwt');
-const { grantRegistrationBonus } = require('../services/wallet.service');
 const { success, error } = require('../utils/apiResponse');
 const logger = require('../utils/logger');
 const crypto = require('crypto');
@@ -17,15 +16,8 @@ const register = async (req, res) => {
 
     const user = await User.create({ username, email, password });
 
-    // Grant registration bonus
-    try {
-      await grantRegistrationBonus(user._id);
-      // Refresh balance
-      const updated = await User.findById(user._id);
-      user.walletBalance = updated.walletBalance;
-    } catch (bonusErr) {
-      logger.warn({ err: bonusErr }, 'Failed to grant registration bonus');
-    }
+    // Real-money economy: new users start at 0 coins.
+    // Coins are acquired only via UPI purchase from a Sub-Admin.
 
     const token = generateToken({ id: user._id, role: user.role });
     setCookieToken(res, token);

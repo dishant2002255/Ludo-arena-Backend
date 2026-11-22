@@ -50,16 +50,32 @@ router.post('/rooms/:roomId/publish-credentials', publishClassicRoomCredentials)
 // Results
 router.get('/results', getResults);
 
-// Wallet management
-router.post('/coins/adjust', adjustCoins);
+// Wallet management — manual free-coin adjustments DISABLED in real-money
+// (1 Coin = ₹1) economy. Coins enter circulation only via Sub-Admin stock.
+router.post('/coins/adjust', (req, res) =>
+  res.status(403).json({
+    success: false,
+    message: 'Manual coin adjustments are disabled. Issue coins via a Sub-Admin.',
+  })
+);
 router.get('/wallet/analytics', getWalletDashboard);
 router.get('/wallet/transactions/:userId', getUserTransactions);
 
-// Coin requests
+// Coin requests — free coin request economy DISABLED (real-money system).
 router.get('/coin-requests', getCoinRequests);
 router.get('/coin-requests/:id', getCoinRequestById);
-router.patch('/coin-requests/:id/approve', validate(reviewCoinRequestSchema), handleApproveCoinRequest);
-router.patch('/coin-requests/:id/reject', validate(reviewCoinRequestSchema), handleRejectCoinRequest);
+router.patch('/coin-requests/:id/approve', (req, res) =>
+  res.status(403).json({
+    success: false,
+    message: 'Free coin approvals are disabled. Coins are issued via Sub-Admin stock only.',
+  })
+);
+router.patch('/coin-requests/:id/reject', (req, res) =>
+  res.status(403).json({
+    success: false,
+    message: 'Free coin approvals are disabled. Coins are issued via Sub-Admin stock only.',
+  })
+);
 
 // Logs
 router.get('/logs', getLogs);

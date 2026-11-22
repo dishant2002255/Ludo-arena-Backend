@@ -1,28 +1,19 @@
 const mongoose = require('mongoose');
 
-/**
- * SystemSettings — singleton admin-configurable platform settings.
- * Only one document exists (upserted on first access).
- *
- * IMPORTANT: UPI payment settings are stored here but payment processing
- * is NOT automated. Admin manually verifies payments in their bank.
- */
 const systemSettingsSchema = new mongoose.Schema(
   {
     key: { type: String, default: 'global', unique: true },
 
     // ── Coin pricing ───────────────────────────────────────────────────────
-    coinPriceRupees: { type: Number, default: 1 },         // 1 coin = ₹1
-    minimumPurchaseCoins: { type: Number, default: 200 },  // min ₹200
-    maximumPurchaseCoins: { type: Number, default: 10000 }, // max ₹10,000
+    coinPriceRupees:        { type: Number, default: 1 },
+    minimumPurchaseCoins:   { type: Number, default: 200 },
+    maximumPurchaseCoins:   { type: Number, default: 10000 },
 
-    // ── UPI Payment Configuration (PLACEHOLDER — not yet active) ──────────
-    upiEnabled: { type: Boolean, default: false },         // must be false until legal clearance
-    upiId: { type: String, trim: true, default: '' },      // e.g. merchant@upi
-    upiName: { type: String, trim: true, default: '' },    // display name
-    upiNote: { type: String, trim: true, default: 'Ludo Arena Coins Purchase' },
-
-    // UPI deep links for each app
+    // ── UPI Payment (global fallback — Sub-Admins override with own UPI) ──
+    upiEnabled: { type: Boolean, default: false },
+    upiId:      { type: String, trim: true, default: '' },
+    upiName:    { type: String, trim: true, default: '' },
+    upiNote:    { type: String, trim: true, default: 'Ludo Arena Coins Purchase' },
     upiApps: {
       gpay:    { type: Boolean, default: true },
       phonepe: { type: Boolean, default: true },
@@ -30,19 +21,24 @@ const systemSettingsSchema = new mongoose.Schema(
       bhim:    { type: Boolean, default: true },
     },
 
-    // ── Payment order expiry ───────────────────────────────────────────────
     orderExpiryMinutes: { type: Number, default: 30 },
+    adminAlarmEnabled:  { type: Boolean, default: true },
 
-    // ── Admin notification settings ────────────────────────────────────────
-    adminAlarmEnabled: { type: Boolean, default: true },
+    // ── Open Battle settings ───────────────────────────────────────────────
+    battleCommissionPercent: { type: Number, default: 5, min: 0, max: 30 },
+    minBattleCoins:          { type: Number, default: 50 },
+    maxBattleCoins:          { type: Number, default: 25000 },
+    enabledGameModes:        { type: [String], default: ['classic', 'quick', 'one_kill', 'popular'] },
 
-    // Last updated by
+    // ── Withdrawal settings ────────────────────────────────────────────────
+    minWithdrawalCoins: { type: Number, default: 200 },
+    maxWithdrawalCoins: { type: Number, default: 50000 },
+
     updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
 
-// Always upsert on get
 systemSettingsSchema.statics.getSettings = async function () {
   let settings = await this.findOne({ key: 'global' });
   if (!settings) {

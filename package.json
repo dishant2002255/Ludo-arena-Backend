@@ -42,7 +42,10 @@
         ],
         "testEnvironment": "node",
         "globalSetup": "<rootDir>/tests/integration/helpers/globalSetup.js",
-        "globalTeardown": "<rootDir>/tests/integration/helpers/globalTeardown.js"
+        "globalTeardown": "<rootDir>/tests/integration/helpers/globalTeardown.js",
+        "setupFiles": [
+          "<rootDir>/tests/integration/helpers/loadTestUri.js"
+        ]
       }
     ]
   },

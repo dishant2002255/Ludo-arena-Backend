@@ -22,6 +22,13 @@ const paymentOrderSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    // Sub-Admin whose UPI ID the user pays (1 Coin = ₹1 economy)
+    subAdmin: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+      index: true,
+    },
 
     // Coins requested (1 coin = ₹1)
     coinsRequested: {

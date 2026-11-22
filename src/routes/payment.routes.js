@@ -16,7 +16,7 @@ const {
   adminGetSettings,
   adminUpdateSettings,
 } = require('../controllers/payment.controller');
-const { authenticate, requireAdmin } = require('../middleware/auth');
+const { authenticate, requireAdmin, requireSubAdminOrMain } = require('../middleware/auth');
 const { uploadScreenshot, handleUploadError } = require('../middleware/upload');
 
 // Rate limit payment initiation: max 3 per 10 minutes
@@ -27,10 +27,10 @@ const paymentLimiter = rateLimit({
   skip: (req) => process.env.NODE_ENV !== 'production',
 });
 
-// ─── Public ───────────────────────────────────────────────────────────────────
+// ─── Public ────────────────────────────────────────────────────────────────────
 router.get('/settings', getPublicSettings);
 
-// ─── Authenticated user ───────────────────────────────────────────────────────
+// ─── Authenticated user ────────────────────────────────────────────────────────
 router.post('/initiate',          authenticate, paymentLimiter, initiate);
 router.post('/notify/:orderId',   authenticate, notifyAdmin);
 router.post('/screenshot/:orderId',
@@ -42,13 +42,15 @@ router.post('/screenshot/:orderId',
 router.get('/my-orders',          authenticate, getMyOrders);
 router.get('/order/:orderId',     authenticate, getOrderStatus);
 
-// ─── Admin ────────────────────────────────────────────────────────────────────
-router.get('/admin/settings',              authenticate, requireAdmin, adminGetSettings);
-router.patch('/admin/settings',            authenticate, requireAdmin, adminUpdateSettings);
-router.get('/admin/pending',               authenticate, requireAdmin, adminGetPending);
-router.get('/admin/all',                   authenticate, requireAdmin, adminGetAll);
-router.patch('/admin/:orderId/approve',    authenticate, requireAdmin, adminApprove);
-router.patch('/admin/:orderId/reject',     authenticate, requireAdmin, adminReject);
-router.patch('/admin/:orderId/dismiss-alarm', authenticate, requireAdmin, adminDismissAlarm);
+// ─── Sub-Admin (own orders) / Main Admin (all) ─────────────────────────────────
+router.get('/admin/pending',                 authenticate, requireSubAdminOrMain, adminGetPending);
+router.get('/admin/all',                     authenticate, requireSubAdminOrMain, adminGetAll);
+router.patch('/admin/:orderId/approve',      authenticate, requireSubAdminOrMain, adminApprove);
+router.patch('/admin/:orderId/reject',       authenticate, requireSubAdminOrMain, adminReject);
+router.patch('/admin/:orderId/dismiss-alarm', authenticate, requireSubAdminOrMain, adminDismissAlarm);
+
+// ─── Main Admin only: global settings ──────────────────────────────────────────
+router.get('/admin/settings',    authenticate, requireAdmin, adminGetSettings);
+router.patch('/admin/settings',  authenticate, requireAdmin, adminUpdateSettings);
 
 module.exports = router;

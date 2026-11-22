@@ -50,47 +50,36 @@ describe('GET /api/wallet/balance', () => {
   });
 });
 
-// ─── Daily Bonus ──────────────────────────────────────────────────────────────
+// ─── Daily Bonus (DISABLED — real-money economy) ─────────────────────────────
 
 describe('POST /api/wallet/daily-bonus/claim', () => {
-  test('claims daily bonus and credits 100 coins', async () => {
+  test('returns 403 — daily bonus disabled in real-money economy', async () => {
     const user = await createUser({ walletBalance: 500 });
     const cookie = await loginUser(app, user.email);
 
     const res = await request(app).post('/api/wallet/daily-bonus/claim').set('Cookie', cookie);
-    expect(res.status).toBe(200);
-    expect(res.body.data.amount).toBe(100);
+    expect(res.status).toBe(403);
+    expect(res.body.success).toBe(false);
   });
 
-  test('creates a wallet transaction record', async () => {
+  test('no wallet transaction is created', async () => {
     const user = await createUser();
     const cookie = await loginUser(app, user.email);
 
     await request(app).post('/api/wallet/daily-bonus/claim').set('Cookie', cookie);
 
     const tx = await WalletTransaction.findOne({ user: user._id, type: 'daily_bonus' });
-    expect(tx).not.toBeNull();
-    expect(tx.amount).toBe(100);
+    expect(tx).toBeNull();
   });
 
-  test('idempotent — second claim on same day returns 400', async () => {
-    const user = await createUser();
-    const cookie = await loginUser(app, user.email);
-
-    await request(app).post('/api/wallet/daily-bonus/claim').set('Cookie', cookie);
-    const res2 = await request(app).post('/api/wallet/daily-bonus/claim').set('Cookie', cookie);
-    expect(res2.status).toBe(400);
-    expect(res2.body.success).toBe(false);
-  });
-
-  test('balance increases after claim', async () => {
+  test('balance does not change after claim attempt', async () => {
     const user = await createUser({ walletBalance: 500 });
     const cookie = await loginUser(app, user.email);
 
     await request(app).post('/api/wallet/daily-bonus/claim').set('Cookie', cookie);
 
     const updated = await User.findById(user._id);
-    expect(updated.walletBalance).toBe(600);
+    expect(updated.walletBalance).toBe(500);
   });
 
   test('returns 401 without auth', async () => {
@@ -106,8 +95,9 @@ describe('GET /api/wallet/history', () => {
     const user = await createUser();
     const cookie = await loginUser(app, user.email);
 
-    // Claim daily to create a transaction
-    await request(app).post('/api/wallet/daily-bonus/claim').set('Cookie', cookie);
+    // Create a transaction directly (daily bonus is disabled)
+    const { adjustWallet } = require('../../src/services/wallet.service');
+    await adjustWallet(user._id, 50, 'admin_adjust', 'test setup', {});
 
     const res = await request(app).get('/api/wallet/history').set('Cookie', cookie);
     expect(res.status).toBe(200);

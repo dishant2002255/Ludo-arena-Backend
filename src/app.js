@@ -22,6 +22,9 @@ const walletRoutes = require('./routes/wallet.routes');
 const adminRoutes = require('./routes/admin.routes');
 const tournamentRoutes = require('./routes/tournament.routes');
 const paymentRoutes = require('./routes/payment.routes');
+const subAdminRoutes = require('./routes/subAdmin.routes');
+const withdrawalRoutes = require('./routes/withdrawal.routes');
+const battleRoutes = require('./routes/battle.routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -101,6 +104,9 @@ app.use('/api/wallet', walletRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/sub-admin', subAdminRoutes);
+app.use('/api/withdrawals', withdrawalRoutes);
+app.use('/api/battles', battleRoutes);
 
 // Socket.IO
 initSocket(io);

@@ -3,33 +3,34 @@ const router = express.Router();
 const {
   getBalance,
   getHistory,
-  claimDaily,
-  submitCoinRequest,
   getMyCoinRequests,
+  getActiveSubAdmins,
+  getMySubWallets,
 } = require('../controllers/wallet.controller');
 const { authenticate } = require('../middleware/auth');
-const validate = require('../middleware/validate');
-const { submitCoinRequestSchema } = require('../validators/coinRequest.validator');
-const rateLimit = require('express-rate-limit');
-
-// Rate limit coin requests — 5 per 24 hours per user
-const coinRequestLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000,
-  max: 5,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: 'Too many coin requests. Try again tomorrow.' },
-  skipFailedRequests: true,
-});
 
 router.use(authenticate);
 
 router.get('/balance', getBalance);
 router.get('/history', getHistory);
-router.post('/daily-bonus/claim', claimDaily);
 
-// Coin requests
-router.post('/coin-requests', coinRequestLimiter, validate(submitCoinRequestSchema), submitCoinRequest);
-router.get('/coin-requests', getMyCoinRequests);
+// ─── DISABLED: free coin economy (1 Coin = ₹1 real-money system) ────────────
+router.post('/daily-bonus/claim', (req, res) =>
+  res.status(403).json({
+    success: false,
+    message: 'Daily bonus is disabled. Purchase coins via UPI from a Sub-Admin.',
+  })
+);
+router.post('/coin-requests', (req, res) =>
+  res.status(403).json({
+    success: false,
+    message: 'Free coin requests are disabled. Purchase coins via UPI from a Sub-Admin.',
+  })
+);
+router.get('/coin-requests', getMyCoinRequests); // read-only history retained
+
+// ─── Sub-Admin economy ───────────────────────────────────────────────────────
+router.get('/sub-admins', getActiveSubAdmins);
+router.get('/my-sub-wallets', getMySubWallets);
 
 module.exports = router;

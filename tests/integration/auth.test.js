@@ -43,9 +43,9 @@ describe('POST /api/auth/register', () => {
     expect(res.headers['set-cookie'][0]).toMatch(/token=/);
   });
 
-  test('grants 500 registration bonus coins', async () => {
+  test('new users start with 0 coins (real-money economy)', async () => {
     const res = await request(app).post('/api/auth/register').send(validPayload);
-    expect(res.body.data.user.walletBalance).toBe(500);
+    expect(res.body.data.user.walletBalance).toBe(0);
   });
 
   test('does not expose password hash in response', async () => {
