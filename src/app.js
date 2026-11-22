@@ -25,6 +25,7 @@ const paymentRoutes = require('./routes/payment.routes');
 const subAdminRoutes = require('./routes/subAdmin.routes');
 const withdrawalRoutes = require('./routes/withdrawal.routes');
 const battleRoutes = require('./routes/battle.routes');
+const publicRoutes = require('./routes/public.routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -107,6 +108,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/sub-admin', subAdminRoutes);
 app.use('/api/withdrawals', withdrawalRoutes);
 app.use('/api/battles', battleRoutes);
+app.use('/api/public', publicRoutes);
 
 // Socket.IO
 initSocket(io);

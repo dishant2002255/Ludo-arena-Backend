@@ -1,0 +1,60 @@
+[
+  {
+    "_id": "6b02c3fa92cfff18aa0e4ffc",
+    "battleCode": "LB-MWRP2TV9-59C6BBC2",
+    "subAdmin": "6b02bbbf0afe23da68069526",
+    "creator": "6af5b141752d5eb1ef0dca8b",
+    "gameMode": "classic",
+    "maxPlayers": 2,
+    "entryCoins": 100,
+    "totalPot": 200,
+    "commissionPercent": 5,
+    "commissionCoins": 10,
+    "winningPrize": 190,
+    "roomId": "987899",
+    "roomPassword": "",
+    "roomUpdatedAt": null,
+    "status": "completed",
+    "participants": [
+      {
+        "user": "6af5b141752d5eb1ef0dca8b",
+        "entryTxId": "6b02c3fa92cfff18aa0e4ffd",
+        "submission": {
+          "claim": "won",
+          "screenshotUrl": "/uploads/screenshots/cdcd7413-3326-431e-af68-b88477a1d0f2.webp",
+          "cancelReason": "",
+          "remarks": "",
+          "submittedAt": "2026-11-22T10:36:15.271Z",
+          "verificationStatus": "approved"
+        },
+        "joinedAt": "2026-11-22T10:29:14.606Z"
+      },
+      {
+        "user": "6af58e5c3b710aa37575e154",
+        "entryTxId": "6b02c58e92cfff18aa0e5006",
+        "submission": {
+          "claim": "lost",
+          "screenshotUrl": "",
+          "cancelReason": "",
+          "remarks": "",
+          "submittedAt": "2026-11-22T10:36:22.131Z",
+          "verificationStatus": "approved"
+        },
+        "joinedAt": "2026-11-22T10:35:58.401Z"
+      }
+    ],
+    "winner": "6af5b141752d5eb1ef0dca8b",
+    "rewardDistributed": true,
+    "refundDistributed": false,
+    "verifiedBy": null,
+    "verifiedByRole": "",
+    "adminRemarks": "Auto-verified from unanimous claims",
+    "startedAt": "2026-11-22T10:35:58.401Z",
+    "completedAt": "2026-11-22T10:36:22.196Z",
+    "cancelledAt": null,
+    "cancelReason": "",
+    "createdAt": "2026-11-22T10:29:14.039Z",
+    "updatedAt": "2026-11-22T10:36:22.197Z",
+    "__v": 2
+  }
+]

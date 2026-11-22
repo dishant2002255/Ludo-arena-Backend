@@ -1,0 +1,25 @@
+[
+  {
+    "_id": "6af5b48d8e86d483f64640ba",
+    "key": "global",
+    "coinPriceRupees": 1,
+    "minimumPurchaseCoins": 200,
+    "maximumPurchaseCoins": 10000,
+    "upiEnabled": true,
+    "upiId": "dishantsaini2@axl",
+    "upiName": "Ludo Arena",
+    "upiNote": "Ludo Arena Coins Purchase",
+    "upiApps": {
+      "gpay": true,
+      "phonepe": true,
+      "paytm": true,
+      "bhim": true
+    },
+    "orderExpiryMinutes": 30,
+    "adminAlarmEnabled": true,
+    "createdAt": "2026-11-12T12:43:57.780Z",
+    "updatedAt": "2026-11-22T10:26:25.450Z",
+    "__v": 0,
+    "updatedBy": "6af58e5b3b710aa37575e153"
+  }
+]

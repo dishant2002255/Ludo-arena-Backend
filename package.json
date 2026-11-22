@@ -8,6 +8,7 @@
     "dev": "nodemon src/app.js",
     "seed": "node src/seeds/seed.js",
     "alive": "node alive.js",
+    "db:reset-history": "node src/scripts/resetAllData.js",
     "test": "jest --runInBand --forceExit --testTimeout=30000",
     "test:unit": "jest tests/unit --runInBand --forceExit",
     "test:integration": "jest tests/integration --runInBand --forceExit --testTimeout=30000"

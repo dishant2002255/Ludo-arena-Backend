@@ -54,8 +54,10 @@ const userSchema = new mongoose.Schema(
     isActive:  { type: Boolean, default: true },
     isBlocked: { type: Boolean, default: false },
 
-    // ── Aggregate wallet balance (sum of all UserSubWallet balances) ──────
-    walletBalance:    { type: Number, default: 0, min: [0, 'Wallet balance cannot be negative'] },
+    // ── Aggregate wallet balances (synced from UserSubWallet documents) ───
+    walletBalance:    { type: Number, default: 0, min: 0 }, // = depositBalance + winningBalance
+    depositBalance:   { type: Number, default: 0, min: 0 }, // Σ sub-wallet depositBalance
+    winningBalance:   { type: Number, default: 0, min: 0 }, // Σ sub-wallet winningBalance
     totalCoinsEarned: { type: Number, default: 0 },
     totalCoinsSpent:  { type: Number, default: 0 },
 

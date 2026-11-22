@@ -64,26 +64,35 @@ const canSeeCredentials = (battle, user) => {
 
 const getWalletOrFail = async (userId, subAdminId, entryCoins) => {
   const wallet = await UserSubWallet.getOrCreate(userId, subAdminId);
-  if (wallet.balance < entryCoins) {
+  const totalPlayable = wallet.depositBalance + wallet.winningBalance;
+  if (totalPlayable < entryCoins) {
     const subAdmin = await User.findById(subAdminId).select('subAdminInfo.displayName');
     throw new Error(
-      `Insufficient balance under ${subAdmin?.subAdminInfo?.displayName || 'this Sub-Admin'}. Available: ${wallet.balance}, needed: ${entryCoins}. Buy more coins via UPI.`
+      `Insufficient balance under ${subAdmin?.subAdminInfo?.displayName || 'this Sub-Admin'}. ` +
+      `Deposit: ₹${wallet.depositBalance}, Winning: ₹${wallet.winningBalance}, Total: ₹${totalPlayable}, needed: ₹${entryCoins}. Buy more coins via UPI.`
     );
   }
   return wallet;
 };
 
-/** Lock entry coins for a participant. Idempotent per (battle, user). */
+/** Lock entry coins. Deduct from depositBalance first, then winningBalance. Idempotent. */
 const lockEntry = async (userId, subAdminId, battleId, battleCode, entryCoins) => {
   const idempotencyKey = `battle_entry_${battleId}_${userId}`;
   const existing = await WalletTransaction.findOne({ idempotencyKey });
-  if (existing) return existing;
+  if (existing) return { tx: existing, fromDeposit: 0, fromWinning: 0 }; // already locked
 
   const wallet = await getWalletOrFail(userId, subAdminId, entryCoins);
   const balBefore = wallet.balance;
-  wallet.balance -= entryCoins;
+
+  // Deposit-first deduction
+  const fromDeposit = Math.min(wallet.depositBalance, entryCoins);
+  const fromWinning = entryCoins - fromDeposit;
+
+  wallet.depositBalance -= fromDeposit;
+  wallet.winningBalance -= fromWinning;
   wallet.lockedBattleBalance += entryCoins;
   wallet.totalWagered += entryCoins;
+  wallet.syncBalance();
   await wallet.save();
   await syncUserAggregateBalance(userId);
 
@@ -93,12 +102,12 @@ const lockEntry = async (userId, subAdminId, battleId, battleCode, entryCoins) =
     amount: -entryCoins,
     balanceBefore: balBefore,
     balanceAfter: wallet.balance,
-    description: `Entry locked for battle ${battleCode}`,
+    description: `Entry locked for battle ${battleCode} (deposit:${fromDeposit} winning:${fromWinning})`,
     subAdmin: subAdminId,
     openBattle: battleId,
     idempotencyKey,
   });
-  return tx;
+  return { tx, fromDeposit, fromWinning };
 };
 
 // ─── Create ───────────────────────────────────────────────────────────────────
@@ -162,8 +171,8 @@ const createBattle = async (userId, data) => {
 
   // Creator is participant #1 — lock entry
   try {
-    const tx = await lockEntry(userId, subAdminId, battle._id, battle.battleCode, entryCoins);
-    battle.participants.push({ user: userId, entryTxId: tx._id, submission: {} });
+    const { tx, fromDeposit, fromWinning } = await lockEntry(userId, subAdminId, battle._id, battle.battleCode, entryCoins);
+    battle.participants.push({ user: userId, entryTxId: tx._id, fromDeposit, fromWinning, submission: {} });
     await battle.save();
   } catch (err) {
     await OpenBattle.findByIdAndDelete(battle._id);
@@ -192,15 +201,17 @@ const joinBattle = async (userId, battleId) => {
 
   // Same-Sub-Admin matchmaking
   const wallet = await UserSubWallet.findOne({ user: userId, subAdmin: battle.subAdmin });
-  if (!wallet || wallet.balance < battle.entryCoins) {
+  const totalPlayable = (wallet?.depositBalance || 0) + (wallet?.winningBalance || 0);
+  if (!wallet || totalPlayable < battle.entryCoins) {
     const subAdmin = await User.findById(battle.subAdmin).select('subAdminInfo.displayName');
     throw new Error(
-      `You need coins under ${subAdmin?.subAdminInfo?.displayName || 'this Sub-Admin'} to join this battle. Available: ${wallet?.balance || 0}, needed: ${battle.entryCoins}.`
+      `You need coins under ${subAdmin?.subAdminInfo?.displayName || 'this Sub-Admin'} to join. ` +
+      `Deposit: ₹${wallet?.depositBalance || 0}, Winning: ₹${wallet?.winningBalance || 0}, needed: ₹${battle.entryCoins}.`
     );
   }
 
-  const tx = await lockEntry(userId, battle.subAdmin, battle._id, battle.battleCode, battle.entryCoins);
-  battle.participants.push({ user: userId, entryTxId: tx._id, submission: {} });
+  const { tx, fromDeposit, fromWinning } = await lockEntry(userId, battle.subAdmin, battle._id, battle.battleCode, battle.entryCoins);
+  battle.participants.push({ user: userId, entryTxId: tx._id, fromDeposit, fromWinning, submission: {} });
 
   const io = getIo();
 
@@ -389,11 +400,14 @@ const finalizeBattle = async (battle, winnerId, verifiedBy, remarks = '') => {
   // Release escrow for every participant
   for (const p of battle.participants) {
     const wallet = await UserSubWallet.getOrCreate(p.user, battle.subAdmin);
+    // Always release lockedBattleBalance for all participants
     wallet.lockedBattleBalance = Math.max(0, wallet.lockedBattleBalance - battle.entryCoins);
     if (String(p.user) === String(winnerId)) {
-      wallet.balance += battle.winningPrize;
+      // 100% of winningPrize goes to winningBalance (withdrawable!)
+      wallet.winningBalance += battle.winningPrize;
       wallet.totalWon += battle.winningPrize;
     }
+    wallet.syncBalance();
     await wallet.save();
     await syncUserAggregateBalance(p.user);
   }
@@ -451,17 +465,26 @@ const finalizeBattle = async (battle, winnerId, verifiedBy, remarks = '') => {
   return battle;
 };
 
-/** Refund specific users (locked entry back to balance). */
+/** Refund specific users (locked entry back to original buckets — anti-laundering). */
 const refundUsers = async (battle, userIds, reason) => {
   for (const uid of userIds) {
     const idempotencyKey = `battle_refund_${battle._id}_${uid}`;
     const existing = await WalletTransaction.findOne({ idempotencyKey });
     if (existing) continue;
 
+    // Find participant's fromDeposit/fromWinning stored at entry
+    const participant = battle.participants.find((p) => String(p.user) === String(uid));
+    const fromDeposit = participant?.fromDeposit ?? battle.entryCoins;
+    const fromWinning = participant?.fromWinning ?? 0;
+
     const wallet = await UserSubWallet.getOrCreate(uid, battle.subAdmin);
     const balBefore = wallet.balance;
-    wallet.balance += battle.entryCoins;
+
+    // Refund exact original buckets (anti-laundering)
+    wallet.depositBalance += fromDeposit;
+    wallet.winningBalance += fromWinning;
     wallet.lockedBattleBalance = Math.max(0, wallet.lockedBattleBalance - battle.entryCoins);
+    wallet.syncBalance();
     await wallet.save();
     await syncUserAggregateBalance(uid);
 
@@ -471,7 +494,7 @@ const refundUsers = async (battle, userIds, reason) => {
       amount: battle.entryCoins,
       balanceBefore: balBefore,
       balanceAfter: wallet.balance,
-      description: `Refund: ${reason} (${battle.battleCode})`,
+      description: `Refund: ${reason} (${battle.battleCode}) [deposit:${fromDeposit} winning:${fromWinning}]`,
       subAdmin: battle.subAdmin,
       openBattle: battle._id,
       idempotencyKey,

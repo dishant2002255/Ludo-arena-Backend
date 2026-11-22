@@ -1,0 +1,107 @@
+[
+  {
+    "_id": "6af58e5e3b710aa37575e15c",
+    "name": "Diamond League",
+    "description": "Entry: 500 coins. Winner takes 1800 coins.",
+    "entryCoins": 500,
+    "winnerReward": 1800,
+    "status": "active",
+    "maxPlayers": 4,
+    "rules": {
+      "bonusTurnOnCapture": true,
+      "turnTimeoutSeconds": 20,
+      "requireSixToStart": true,
+      "bonusTurnOnSix": true,
+      "maxConsecutiveSixes": 3
+    },
+    "createdBy": "6af58e5b3b710aa37575e153",
+    "totalRoomsCreated": 0,
+    "__v": 0,
+    "createdAt": "2026-11-12T10:01:02.247Z",
+    "updatedAt": "2026-11-12T10:01:02.247Z"
+  },
+  {
+    "_id": "6af58e5e3b710aa37575e15a",
+    "name": "Silver League",
+    "description": "Entry: 100 coins. Winner takes 350 coins.",
+    "entryCoins": 100,
+    "winnerReward": 350,
+    "status": "active",
+    "maxPlayers": 4,
+    "rules": {
+      "requireSixToStart": true,
+      "bonusTurnOnSix": true,
+      "bonusTurnOnCapture": false,
+      "maxConsecutiveSixes": 3,
+      "turnTimeoutSeconds": 30
+    },
+    "createdBy": "6af58e5b3b710aa37575e153",
+    "totalRoomsCreated": 1,
+    "__v": 0,
+    "createdAt": "2026-11-12T10:01:02.247Z",
+    "updatedAt": "2026-11-12T12:42:05.241Z"
+  },
+  {
+    "_id": "6af58e5e3b710aa37575e15b",
+    "name": "Gold League",
+    "description": "Entry: 200 coins. Winner takes 700 coins.",
+    "entryCoins": 200,
+    "winnerReward": 700,
+    "status": "active",
+    "maxPlayers": 4,
+    "rules": {
+      "requireSixToStart": true,
+      "bonusTurnOnSix": true,
+      "bonusTurnOnCapture": false,
+      "maxConsecutiveSixes": 3,
+      "turnTimeoutSeconds": 30
+    },
+    "createdBy": "6af58e5b3b710aa37575e153",
+    "totalRoomsCreated": 1,
+    "__v": 0,
+    "createdAt": "2026-11-12T10:01:02.247Z",
+    "updatedAt": "2026-11-12T13:47:16.640Z"
+  },
+  {
+    "_id": "6af58e5e3b710aa37575e159",
+    "name": "Bronze League",
+    "description": "Entry: 50 coins. Winner takes 150 coins.",
+    "entryCoins": 50,
+    "winnerReward": 150,
+    "status": "active",
+    "maxPlayers": 4,
+    "rules": {
+      "requireSixToStart": true,
+      "bonusTurnOnSix": true,
+      "bonusTurnOnCapture": false,
+      "maxConsecutiveSixes": 3,
+      "turnTimeoutSeconds": 30
+    },
+    "createdBy": "6af58e5b3b710aa37575e153",
+    "totalRoomsCreated": 0,
+    "__v": 0,
+    "createdAt": "2026-11-12T10:01:02.246Z",
+    "updatedAt": "2026-11-12T10:01:02.246Z"
+  },
+  {
+    "_id": "6af58e5e3b710aa37575e158",
+    "name": "Classic Arena",
+    "description": "Standard Ludo match. Free entry, 300 coins winner reward.",
+    "entryCoins": 0,
+    "winnerReward": 300,
+    "status": "active",
+    "maxPlayers": 4,
+    "rules": {
+      "requireSixToStart": true,
+      "bonusTurnOnSix": true,
+      "bonusTurnOnCapture": false,
+      "maxConsecutiveSixes": 3,
+      "turnTimeoutSeconds": 30
+    },
+    "createdBy": "6af58e5b3b710aa37575e153",
+    "totalRoomsCreated": 1,
+    "__v": 0,
+    "createdAt": "2026-11-12T10:01:02.245Z",
+    "updatedAt": "2026-11-13T06:39:02.603Z"
+  }
+]

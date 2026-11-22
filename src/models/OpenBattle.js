@@ -22,6 +22,8 @@ const participantSchema = new mongoose.Schema({
   user:        { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   joinedAt:    { type: Date, default: Date.now },
   entryTxId:   { type: mongoose.Schema.Types.ObjectId, ref: 'WalletTransaction', default: null },
+  fromDeposit: { type: Number, default: 0 }, // how much of entry came from depositBalance
+  fromWinning: { type: Number, default: 0 }, // how much came from winningBalance
   submission:  { type: submissionSchema, default: () => ({}) },
 }, { _id: false });
 

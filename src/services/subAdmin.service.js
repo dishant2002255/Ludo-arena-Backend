@@ -38,13 +38,15 @@ const logAdminAction = async (adminId, action, targetType, targetId, details, ip
 };
 
 /**
- * Update the User's aggregate walletBalance = SUM of all their UserSubWallet.balance values.
+ * Update the User's aggregate wallet fields = SUM of all their UserSubWallet bucket values.
  */
 const syncUserAggregateBalance = async (userId) => {
   const wallets = await UserSubWallet.find({ user: userId });
-  const total = wallets.reduce((s, w) => s + w.balance, 0);
-  await User.findByIdAndUpdate(userId, { walletBalance: total });
-  return total;
+  const depositBalance = wallets.reduce((s, w) => s + w.depositBalance, 0);
+  const winningBalance = wallets.reduce((s, w) => s + w.winningBalance, 0);
+  const walletBalance  = depositBalance + winningBalance;
+  await User.findByIdAndUpdate(userId, { walletBalance, depositBalance, winningBalance });
+  return { walletBalance, depositBalance, winningBalance };
 };
 
 // ─── Sub-Admin Creation ────────────────────────────────────────────────────────
@@ -166,15 +168,6 @@ const deductCoinsFromSubAdmin = async (mainAdminId, subAdminId, amount, remarks 
 
 // ─── Sub-Admin UPI Coin Purchase Approval ─────────────────────────────────────
 
-/**
- * Called when Sub-Admin or Main Admin approves a UPI PaymentOrder.
- * Atomically:
- *  1. Verify subAdmin.coinStock >= coinsRequested
- *  2. Deduct from coinStock, increment totalCoinsSold
- *  3. Credit UserSubWallet(user, subAdmin).balance
- *  4. Sync User aggregate balance
- *  5. Record SubAdminLedger + WalletTransaction
- */
 const approveCoinPurchase = async (order, actingAdminId) => {
   const idempotencyKey = `coin_purchase_${order._id}`;
   const existing = await WalletTransaction.findOne({ idempotencyKey });
@@ -193,7 +186,6 @@ const approveCoinPurchase = async (order, actingAdminId) => {
   const stockBefore = subAdmin.subAdminInfo.coinStock;
   const stockAfter  = stockBefore - order.coinsRequested;
 
-  // Update Sub-Admin stock
   await User.findByIdAndUpdate(order.subAdmin, {
     $inc: {
       'subAdminInfo.coinStock':     -order.coinsRequested,
@@ -201,22 +193,22 @@ const approveCoinPurchase = async (order, actingAdminId) => {
     },
   });
 
-  // Credit user's sub-wallet
   const wallet = await UserSubWallet.getOrCreate(order.user, order.subAdmin);
-  const walletBalanceBefore = wallet.balance;
-  wallet.balance       += order.coinsRequested;
+  const balanceBefore = wallet.balance;
+
+  // 100% → depositBalance (purchased coins are play-only)
+  wallet.depositBalance += order.coinsRequested;
   wallet.totalPurchased += order.coinsRequested;
+  wallet.syncBalance();
   await wallet.save();
 
-  // Sync user aggregate balance
-  const newUserBalance = await syncUserAggregateBalance(order.user);
+  await syncUserAggregateBalance(order.user);
 
-  // WalletTransaction
   const tx = await WalletTransaction.create({
     user:          order.user,
     type:          'coin_purchase',
     amount:        order.coinsRequested,
-    balanceBefore: walletBalanceBefore,
+    balanceBefore,
     balanceAfter:  wallet.balance,
     description:   `UPI purchase ₹${order.amountRupees} from ${subAdmin.subAdminInfo.displayName}`,
     subAdmin:      order.subAdmin,
@@ -225,7 +217,6 @@ const approveCoinPurchase = async (order, actingAdminId) => {
     idempotencyKey,
   });
 
-  // SubAdminLedger
   await SubAdminLedger.create({
     subAdmin:     order.subAdmin,
     type:         'user_coin_purchase',
@@ -244,7 +235,7 @@ const approveCoinPurchase = async (order, actingAdminId) => {
   });
 
   logger.info({ orderId: order._id, coinsRequested: order.coinsRequested }, 'Coin purchase approved');
-  return { tx, newUserBalance };
+  return { tx, newBalance: wallet.balance };
 };
 
 // ─── Withdrawal Request ───────────────────────────────────────────────────────
@@ -265,7 +256,6 @@ const submitWithdrawal = async (userId, subAdminId, data) => {
     throw new Error('Sub-Admin not found or inactive');
   }
 
-  // Check for existing pending withdrawal under same (user, subAdmin)
   const existingPending = await WithdrawalRequest.findOne({
     user: userId, subAdmin: subAdminId, status: 'pending',
   });
@@ -273,25 +263,27 @@ const submitWithdrawal = async (userId, subAdminId, data) => {
     throw new Error('You already have a pending withdrawal request for this Sub-Admin.');
   }
 
-  // Check sub-wallet balance
   const wallet = await UserSubWallet.getOrCreate(userId, subAdminId);
-  if (wallet.balance < amountCoins) {
-    throw new Error(`Insufficient balance. Available: ${wallet.balance} coins under ${subAdmin.subAdminInfo.displayName}`);
+
+  // STRICT CHECK: only winningBalance is withdrawable
+  if (wallet.winningBalance < amountCoins) {
+    throw new Error(
+      `Only Winning Coins can be withdrawn. Your withdrawable Winning Balance under ${subAdmin.subAdminInfo.displayName} is ₹${wallet.winningBalance}` +
+      (wallet.depositBalance > 0 ? ` (Deposit Coins ₹${wallet.depositBalance} can only be used to play battles).` : '.')
+    );
   }
 
   const withdrawalRef = genWithdrawalRef();
   const idempotencyKey = `wd_lock_${withdrawalRef}`;
 
-  // Check idempotency
-  const existingTx = await WalletTransaction.findOne({ idempotencyKey });
-  if (existingTx) throw new Error('Duplicate withdrawal request detected');
+  const existing = await WalletTransaction.findOne({ idempotencyKey });
+  if (existing) throw new Error('Duplicate withdrawal request detected');
 
-  // Create withdrawal request
   const withdrawal = await WithdrawalRequest.create({
     user: userId,
     subAdmin: subAdminId,
     amountCoins,
-    amountRupees: amountCoins, // 1:1
+    amountRupees: amountCoins,
     withdrawalReference: withdrawalRef,
     payoutMethod: payoutMethod || 'upi',
     userUpiId: userUpiId || '',
@@ -303,14 +295,14 @@ const submitWithdrawal = async (userId, subAdminId, data) => {
     idempotencyKey,
   });
 
-  // Lock coins: balance → lockedWithdrawalBalance
+  // Lock from winningBalance only
   const balBefore = wallet.balance;
-  wallet.balance -= amountCoins;
+  wallet.winningBalance -= amountCoins;
   wallet.lockedWithdrawalBalance += amountCoins;
+  wallet.syncBalance();
   await wallet.save();
   await syncUserAggregateBalance(userId);
 
-  // WalletTransaction — withdrawal_lock
   await WalletTransaction.create({
     user:          userId,
     type:          'withdrawal_lock',
@@ -323,7 +315,6 @@ const submitWithdrawal = async (userId, subAdminId, data) => {
     idempotencyKey,
   });
 
-  // Notify Sub-Admin + Main Admin
   const io = getIo();
   if (io) {
     const payload = {
@@ -347,13 +338,12 @@ const approveWithdrawal = async (withdrawal, actingAdminId, utrReference = '', a
   const wallet = await UserSubWallet.getOrCreate(withdrawal.user, withdrawal.subAdmin);
   const balBefore = wallet.balance;
 
-  // Decrement lockedWithdrawalBalance
   wallet.lockedWithdrawalBalance -= withdrawal.amountCoins;
   wallet.totalWithdrawn += withdrawal.amountCoins;
+  // balance/buckets unchanged — coins were already removed from winningBalance on submit
   await wallet.save();
   await syncUserAggregateBalance(withdrawal.user);
 
-  // Update withdrawal
   withdrawal.status      = 'approved';
   withdrawal.utrReference = utrReference;
   withdrawal.adminRemarks = adminRemarks;
@@ -373,7 +363,6 @@ const approveWithdrawal = async (withdrawal, actingAdminId, utrReference = '', a
     },
   });
 
-  // SubAdminLedger
   await SubAdminLedger.create({
     subAdmin:          withdrawal.subAdmin,
     type:              'user_withdrawal_return',
@@ -387,11 +376,10 @@ const approveWithdrawal = async (withdrawal, actingAdminId, utrReference = '', a
     idempotencyKey:    `ledger_wd_approve_${withdrawal._id}`,
   });
 
-  // WalletTransaction
   await WalletTransaction.create({
     user:          withdrawal.user,
     type:          'withdrawal_approved',
-    amount:        0, // coins already locked, no further balance change
+    amount:        0,
     balanceBefore: balBefore,
     balanceAfter:  balBefore,
     description:   `Withdrawal approved ₹${withdrawal.amountRupees} — UTR: ${utrReference}`,
@@ -405,7 +393,6 @@ const approveWithdrawal = async (withdrawal, actingAdminId, utrReference = '', a
     amountCoins: withdrawal.amountCoins, utrReference,
   }, ip);
 
-  // Notify user
   const io = getIo();
   if (io) {
     io.to(`user:${withdrawal.user}`).emit('withdrawal:updated', {
@@ -427,11 +414,13 @@ const rejectWithdrawal = async (withdrawal, actingAdminId, adminRemarks = '', ip
   const existing = await WalletTransaction.findOne({ idempotencyKey });
   if (existing) throw new Error('Already rejected');
 
-  // Refund: lockedWithdrawalBalance → balance
   const wallet = await UserSubWallet.getOrCreate(withdrawal.user, withdrawal.subAdmin);
   const balBefore = wallet.balance;
-  wallet.balance += withdrawal.amountCoins;
+
+  // Refund back to winningBalance (it came from there on submit)
+  wallet.winningBalance += withdrawal.amountCoins;
   wallet.lockedWithdrawalBalance -= withdrawal.amountCoins;
+  wallet.syncBalance();
   await wallet.save();
   await syncUserAggregateBalance(withdrawal.user);
 
@@ -448,7 +437,7 @@ const rejectWithdrawal = async (withdrawal, actingAdminId, adminRemarks = '', ip
     amount:        withdrawal.amountCoins,
     balanceBefore: balBefore,
     balanceAfter:  wallet.balance,
-    description:   `Withdrawal rejected — refunded: ${withdrawal.withdrawalReference}`,
+    description:   `Withdrawal rejected — refunded to Winning Wallet: ${withdrawal.withdrawalReference}`,
     subAdmin:      withdrawal.subAdmin,
     withdrawalRequest: withdrawal._id,
     adjustedBy:    actingAdminId,

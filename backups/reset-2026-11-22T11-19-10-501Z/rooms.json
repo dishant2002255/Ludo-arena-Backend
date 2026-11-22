@@ -1,0 +1,62 @@
+[
+  {
+    "_id": "6af6b08620177426773bb0d6",
+    "roomId": "ROOM-86486AB9",
+    "match": "6af58e5e3b710aa37575e158",
+    "players": [
+      {
+        "user": "6af5b141752d5eb1ef0dca8b",
+        "color": "red",
+        "position": 0,
+        "isConnected": false,
+        "finalRank": null,
+        "_id": "6af6b08620177426773bb0d7",
+        "joinedAt": "2026-11-13T06:39:02.672Z",
+        "disconnectedAt": "2026-11-22T10:49:34.158Z"
+      },
+      {
+        "user": "6af58e5c3b710aa37575e154",
+        "color": "green",
+        "position": 1,
+        "isConnected": false,
+        "finalRank": null,
+        "_id": "6af6b0c620177426773bb0dc",
+        "joinedAt": "2026-11-13T06:40:06.483Z",
+        "disconnectedAt": "2026-11-22T10:49:34.199Z"
+      },
+      {
+        "user": "6af58e5d3b710aa37575e156",
+        "color": "yellow",
+        "position": 2,
+        "isConnected": false,
+        "finalRank": null,
+        "_id": "6af6b13420177426773bb0eb",
+        "joinedAt": "2026-11-13T06:41:56.551Z",
+        "disconnectedAt": "2026-11-13T06:49:34.451Z"
+      },
+      {
+        "user": "6af58e5c3b710aa37575e155",
+        "color": "blue",
+        "position": 3,
+        "isConnected": false,
+        "finalRank": null,
+        "_id": "6af6b13820177426773bb0f8",
+        "joinedAt": "2026-11-13T06:42:00.866Z",
+        "disconnectedAt": "2026-11-13T06:49:34.593Z"
+      }
+    ],
+    "status": "full",
+    "winner": null,
+    "winnerColor": null,
+    "entryCoins": 0,
+    "winnerReward": 300,
+    "rewardDistributed": false,
+    "externalRoomId": "79523338",
+    "externalRoomPassword": "",
+    "externalRoomPublishedAt": "2026-11-13T06:46:12.807Z",
+    "externalRoomPublishedBy": "6af58e5b3b710aa37575e153",
+    "createdAt": "2026-11-13T06:39:02.498Z",
+    "updatedAt": "2026-11-22T10:49:34.199Z",
+    "__v": 4
+  }
+]

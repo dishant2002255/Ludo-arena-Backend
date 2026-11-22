@@ -1,0 +1,47 @@
+[
+  {
+    "_id": "6b02bbf60afe23da6806952b",
+    "user": "6af5b141752d5eb1ef0dca8b",
+    "subAdmin": "6b02bbbf0afe23da68069526",
+    "balance": 490,
+    "lockedBattleBalance": 0,
+    "lockedWithdrawalBalance": 0,
+    "totalPurchased": 400,
+    "totalWithdrawn": 0,
+    "totalWagered": 100,
+    "totalWon": 190,
+    "createdAt": "2026-11-22T09:55:02.526Z",
+    "updatedAt": "2026-11-22T10:36:22.328Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02bcaf0afe23da68069534",
+    "user": "6af58e5b3b710aa37575e153",
+    "subAdmin": "6b02bbbf0afe23da68069526",
+    "balance": 0,
+    "lockedBattleBalance": 0,
+    "lockedWithdrawalBalance": 0,
+    "totalPurchased": 0,
+    "totalWithdrawn": 0,
+    "totalWagered": 0,
+    "totalWon": 0,
+    "createdAt": "2026-11-22T09:58:07.719Z",
+    "updatedAt": "2026-11-22T09:58:07.719Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c57b92cfff18aa0e5000",
+    "user": "6af58e5c3b710aa37575e154",
+    "subAdmin": "6b02bbbf0afe23da68069526",
+    "balance": 100,
+    "lockedBattleBalance": 0,
+    "lockedWithdrawalBalance": 0,
+    "totalPurchased": 200,
+    "totalWithdrawn": 0,
+    "totalWagered": 100,
+    "totalWon": 0,
+    "createdAt": "2026-11-22T10:35:39.795Z",
+    "updatedAt": "2026-11-22T10:36:22.591Z",
+    "__v": 0
+  }
+]

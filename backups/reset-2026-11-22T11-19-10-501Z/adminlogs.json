@@ -1,0 +1,445 @@
+[
+  {
+    "_id": "6af5b4a68e86d483f64640bb",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "update_payment_settings",
+    "targetType": "system",
+    "details": {
+      "upiEnabled": true,
+      "upiId": "8233999833@ybl",
+      "upiName": "Ludo Arena",
+      "upiNote": "Ludo Arena Coins Purchase",
+      "upiApps": {
+        "gpay": true,
+        "phonepe": true,
+        "paytm": true,
+        "bhim": true
+      },
+      "coinPriceRupees": 1,
+      "minimumPurchaseCoins": 200,
+      "maximumPurchaseCoins": 10000,
+      "orderExpiryMinutes": 30,
+      "adminAlarmEnabled": true,
+      "updatedBy": "6af58e5b3b710aa37575e153"
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T12:44:22.893Z",
+    "updatedAt": "2026-11-12T12:44:22.893Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5b81a8e86d483f64640c3",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "update_payment_settings",
+    "targetType": "system",
+    "details": {
+      "upiEnabled": true,
+      "upiId": "dishantsaini2@axl",
+      "upiName": "Ludo Arena",
+      "upiNote": "Ludo Arena Coins Purchase",
+      "upiApps": {
+        "gpay": true,
+        "phonepe": true,
+        "paytm": true,
+        "bhim": true
+      },
+      "coinPriceRupees": 1,
+      "minimumPurchaseCoins": 200,
+      "maximumPurchaseCoins": 10000,
+      "orderExpiryMinutes": 30,
+      "adminAlarmEnabled": true,
+      "updatedBy": "6af58e5b3b710aa37575e153"
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T12:59:06.649Z",
+    "updatedAt": "2026-11-12T12:59:06.649Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c26d8e86d483f64640d4",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c2298e86d483f64640d0",
+    "details": {
+      "orderReference": "LA-MWDLK8MZ-B8CBF78C",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.31.242.10",
+    "createdAt": "2026-11-12T13:43:09.853Z",
+    "updatedAt": "2026-11-12T13:43:09.853Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c3568e86d483f64640da",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c2948e86d483f64640d6",
+    "details": {
+      "orderReference": "LA-MWDLMJLX-8A05C0EC",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.31.242.10",
+    "createdAt": "2026-11-12T13:47:02.376Z",
+    "updatedAt": "2026-11-12T13:47:02.376Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c42e8e86d483f64640f4",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c4138e86d483f64640f1",
+    "details": {
+      "orderReference": "LA-MWDLUR5Q-C8A7AA49",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T13:50:38.675Z",
+    "updatedAt": "2026-11-12T13:50:38.675Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c45e8e86d483f64640fd",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c4378e86d483f64640fa",
+    "details": {
+      "orderReference": "LA-MWDLVIVH-5758840D",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.31.242.10",
+    "createdAt": "2026-11-12T13:51:26.530Z",
+    "updatedAt": "2026-11-12T13:51:26.530Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c4a38e86d483f6464106",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c4928e86d483f6464103",
+    "details": {
+      "orderReference": "LA-MWDLXH0J-F24FFDCE",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.29.117.13",
+    "createdAt": "2026-11-12T13:52:35.497Z",
+    "updatedAt": "2026-11-12T13:52:35.497Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c50f5be1e44db8c67270",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c4e95be1e44db8c67269",
+    "details": {
+      "orderReference": "LA-MWDLZBJV-53078113",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T13:54:23.622Z",
+    "updatedAt": "2026-11-12T13:54:23.622Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5525be1e44db8c6727b",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c5285be1e44db8c67278",
+    "details": {
+      "orderReference": "LA-MWDM0OHO-1F3CC76B",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T13:55:30.272Z",
+    "updatedAt": "2026-11-12T13:55:30.272Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5945be1e44db8c67284",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c5835be1e44db8c67281",
+    "details": {
+      "orderReference": "LA-MWDM2MV9-A4C26EA3",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T13:56:36.827Z",
+    "updatedAt": "2026-11-12T13:56:36.827Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5ab5be1e44db8c67289",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c5a15be1e44db8c67286",
+    "details": {
+      "orderReference": "LA-MWDM39UA-E781EE5A",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T13:56:59.243Z",
+    "updatedAt": "2026-11-12T13:56:59.243Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c65a5be1e44db8c6728e",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c63d5be1e44db8c6728b",
+    "details": {
+      "orderReference": "LA-MWDM6M5M-15217BC3",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.29.45.168",
+    "createdAt": "2026-11-12T13:59:54.740Z",
+    "updatedAt": "2026-11-12T13:59:54.740Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c6895be1e44db8c67295",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c66e5be1e44db8c67292",
+    "details": {
+      "orderReference": "LA-MWDM7O53-5D508FAB",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.31.242.10",
+    "createdAt": "2026-11-12T14:00:41.902Z",
+    "updatedAt": "2026-11-12T14:00:41.902Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c98c5be1e44db8c672a2",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6af5c9575be1e44db8c6729b",
+    "details": {
+      "orderReference": "LA-MWDMNMLV-481DFDC6",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.31.242.10",
+    "createdAt": "2026-11-12T14:13:32.003Z",
+    "updatedAt": "2026-11-12T14:13:32.003Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af6b23420177426773bb109",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "publish_classic_room_credentials",
+    "targetType": "room",
+    "targetId": "6af6b08620177426773bb0d6",
+    "details": {
+      "roomId": "ROOM-86486AB9",
+      "externalRoomId": "79523338"
+    },
+    "ipAddress": "10.29.117.13",
+    "createdAt": "2026-11-13T06:46:12.888Z",
+    "updatedAt": "2026-11-13T06:46:12.888Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02bbc00afe23da68069527",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "create_sub_admin",
+    "targetType": "user",
+    "targetId": "6b02bbbf0afe23da68069526",
+    "details": {
+      "username": "Shubham",
+      "email": "coffencue@gmail.com"
+    },
+    "ipAddress": "",
+    "createdAt": "2026-11-22T09:54:08.957Z",
+    "updatedAt": "2026-11-22T09:54:08.957Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02bbc10afe23da68069529",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "issue_coins_to_subadmin",
+    "targetType": "user",
+    "targetId": "6b02bbbf0afe23da68069526",
+    "details": {
+      "amount": 10000,
+      "remarks": "Initial coin issue on account creation"
+    },
+    "ipAddress": "",
+    "createdAt": "2026-11-22T09:54:09.258Z",
+    "updatedAt": "2026-11-22T09:54:09.258Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02bc610afe23da68069530",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_coin_purchase",
+    "targetType": "wallet",
+    "targetId": "6b02bc170afe23da6806952c",
+    "details": {
+      "userId": "6af5b141752d5eb1ef0dca8b",
+      "coinsRequested": 200
+    },
+    "ipAddress": "",
+    "createdAt": "2026-11-22T09:56:49.499Z",
+    "updatedAt": "2026-11-22T09:56:49.499Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02bc610afe23da68069531",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6b02bc170afe23da6806952c",
+    "details": {
+      "orderReference": "LA-MWRNVKDF-F5537B68",
+      "subAdmin": "6b02bbbf0afe23da68069526",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "::1",
+    "createdAt": "2026-11-22T09:56:49.614Z",
+    "updatedAt": "2026-11-22T09:56:49.614Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c33792cfff18aa0e4fef",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "issue_coins_to_subadmin",
+    "targetType": "user",
+    "targetId": "6b02bbbf0afe23da68069526",
+    "details": {
+      "amount": 1000,
+      "remarks": ""
+    },
+    "ipAddress": "",
+    "createdAt": "2026-11-22T10:25:59.529Z",
+    "updatedAt": "2026-11-22T10:25:59.529Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c35192cfff18aa0e4ff4",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "update_payment_settings",
+    "targetType": "system",
+    "details": {
+      "coinPriceRupees": 1,
+      "minimumPurchaseCoins": 200,
+      "maximumPurchaseCoins": 10000,
+      "orderExpiryMinutes": 30,
+      "adminAlarmEnabled": true,
+      "upiApps": {
+        "gpay": true,
+        "phonepe": true,
+        "paytm": true,
+        "bhim": true
+      },
+      "updatedBy": "6af58e5b3b710aa37575e153"
+    },
+    "ipAddress": "10.25.107.176",
+    "createdAt": "2026-11-22T10:26:25.538Z",
+    "updatedAt": "2026-11-22T10:26:25.538Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c3e892cfff18aa0e4ff9",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_coin_purchase",
+    "targetType": "wallet",
+    "targetId": "6b02c3d092cfff18aa0e4ff5",
+    "details": {
+      "userId": "6af5b141752d5eb1ef0dca8b",
+      "coinsRequested": 200
+    },
+    "ipAddress": "",
+    "createdAt": "2026-11-22T10:28:56.498Z",
+    "updatedAt": "2026-11-22T10:28:56.498Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c3e892cfff18aa0e4ffa",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6b02c3d092cfff18aa0e4ff5",
+    "details": {
+      "orderReference": "LA-MWRP1Y6C-812C6B9E",
+      "subAdmin": "6b02bbbf0afe23da68069526",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.28.192.255",
+    "createdAt": "2026-11-22T10:28:56.632Z",
+    "updatedAt": "2026-11-22T10:28:56.632Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c57c92cfff18aa0e5003",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_coin_purchase",
+    "targetType": "wallet",
+    "targetId": "6b02c56e92cfff18aa0e4ffe",
+    "details": {
+      "userId": "6af58e5c3b710aa37575e154",
+      "coinsRequested": 200
+    },
+    "ipAddress": "",
+    "createdAt": "2026-11-22T10:35:40.195Z",
+    "updatedAt": "2026-11-22T10:35:40.195Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c57c92cfff18aa0e5004",
+    "admin": "6af58e5b3b710aa37575e153",
+    "action": "approve_payment",
+    "targetType": "wallet",
+    "targetId": "6b02c56e92cfff18aa0e4ffe",
+    "details": {
+      "orderReference": "LA-MWRPAT2D-7952907A",
+      "subAdmin": "6b02bbbf0afe23da68069526",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "adminRemarks": ""
+    },
+    "ipAddress": "10.28.5.144",
+    "createdAt": "2026-11-22T10:35:40.366Z",
+    "updatedAt": "2026-11-22T10:35:40.366Z",
+    "__v": 0
+  }
+]

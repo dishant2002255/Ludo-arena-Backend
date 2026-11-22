@@ -34,6 +34,9 @@ const systemSettingsSchema = new mongoose.Schema(
     minWithdrawalCoins: { type: Number, default: 200 },
     maxWithdrawalCoins: { type: Number, default: 50000 },
 
+    // ── Live fake activity (social proof) ──────────────────────────────────
+    fakeActivityEnabled: { type: Boolean, default: true },
+
     updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }

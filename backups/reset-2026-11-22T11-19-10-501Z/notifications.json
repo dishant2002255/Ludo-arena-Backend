@@ -1,0 +1,658 @@
+[
+  {
+    "_id": "6af5b4ce8e86d483f64640bd",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDJITG6-A7FB1526",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5b4c78e86d483f64640bc",
+      "orderReference": "LA-MWDJITG6-A7FB1526",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "phonepe"
+    },
+    "createdAt": "2026-11-12T12:45:02.448Z",
+    "updatedAt": "2026-11-12T12:45:02.448Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5b8978e86d483f64640c5",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDK3LSR-2DBC288C",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5b8918e86d483f64640c4",
+      "orderReference": "LA-MWDK3LSR-2DBC288C",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "phonepe"
+    },
+    "createdAt": "2026-11-12T13:01:11.768Z",
+    "updatedAt": "2026-11-12T13:01:11.768Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5be408e86d483f64640cb",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDKY49R-C1BB30FF",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5be218e86d483f64640ca",
+      "orderReference": "LA-MWDKY49R-C1BB30FF",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "phonepe"
+    },
+    "createdAt": "2026-11-12T13:25:20.007Z",
+    "updatedAt": "2026-11-12T13:25:20.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c2298e86d483f64640d1",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDLK8MZ-B8CBF78C",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c2298e86d483f64640d0",
+      "orderReference": "LA-MWDLK8MZ-B8CBF78C",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "phonepe"
+    },
+    "createdAt": "2026-11-12T13:42:01.949Z",
+    "updatedAt": "2026-11-12T13:42:01.949Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c26d8e86d483f64640d5",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c2298e86d483f64640d0",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:43:09.984Z",
+    "updatedAt": "2026-11-12T13:43:09.984Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c2958e86d483f64640d7",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDLMJLX-8A05C0EC",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c2948e86d483f64640d6",
+      "orderReference": "LA-MWDLMJLX-8A05C0EC",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "phonepe"
+    },
+    "createdAt": "2026-11-12T13:43:49.789Z",
+    "updatedAt": "2026-11-12T13:43:49.789Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c3568e86d483f64640db",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c2948e86d483f64640d6",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:47:02.503Z",
+    "updatedAt": "2026-11-12T13:47:02.503Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c3f78e86d483f64640f0",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "tournament_joined",
+    "title": "Tournament Joined!",
+    "message": "You have successfully joined \"Practice Match\". Waiting for 3 more player(s).",
+    "isRead": false,
+    "data": {
+      "tournamentId": "6af5bab58e86d483f64640c7"
+    },
+    "createdAt": "2026-11-12T13:49:43.773Z",
+    "updatedAt": "2026-11-12T13:49:43.773Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c4148e86d483f64640f2",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDLUR5Q-C8A7AA49",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c4138e86d483f64640f1",
+      "orderReference": "LA-MWDLUR5Q-C8A7AA49",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T13:50:12.588Z",
+    "updatedAt": "2026-11-12T13:50:12.588Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c42e8e86d483f64640f5",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c4138e86d483f64640f1",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:50:38.807Z",
+    "updatedAt": "2026-11-12T13:50:38.807Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c4388e86d483f64640fb",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDLVIVH-5758840D",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c4378e86d483f64640fa",
+      "orderReference": "LA-MWDLVIVH-5758840D",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T13:50:48.596Z",
+    "updatedAt": "2026-11-12T13:50:48.596Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c45e8e86d483f64640fe",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c4378e86d483f64640fa",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:51:26.663Z",
+    "updatedAt": "2026-11-12T13:51:26.663Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c4938e86d483f6464104",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDLXH0J-F24FFDCE",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c4928e86d483f6464103",
+      "orderReference": "LA-MWDLXH0J-F24FFDCE",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T13:52:19.522Z",
+    "updatedAt": "2026-11-12T13:52:19.522Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c4a38e86d483f6464107",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c4928e86d483f6464103",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:52:35.629Z",
+    "updatedAt": "2026-11-12T13:52:35.629Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c4e95be1e44db8c6726a",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDLZBJV-53078113",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c4e95be1e44db8c67269",
+      "orderReference": "LA-MWDLZBJV-53078113",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T13:53:45.639Z",
+    "updatedAt": "2026-11-12T13:53:45.639Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c50f5be1e44db8c67271",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c4e95be1e44db8c67269",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:54:23.755Z",
+    "updatedAt": "2026-11-12T13:54:23.755Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5295be1e44db8c67279",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDM0OHO-1F3CC76B",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c5285be1e44db8c67278",
+      "orderReference": "LA-MWDM0OHO-1F3CC76B",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T13:54:49.026Z",
+    "updatedAt": "2026-11-12T13:54:49.026Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5525be1e44db8c6727c",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c5285be1e44db8c67278",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:55:30.407Z",
+    "updatedAt": "2026-11-12T13:55:30.407Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5845be1e44db8c67282",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Samar has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDM2MV9-A4C26EA3",
+    "isRead": false,
+    "sentBy": "6af5c5715be1e44db8c6727d",
+    "data": {
+      "orderId": "6af5c5835be1e44db8c67281",
+      "orderReference": "LA-MWDM2MV9-A4C26EA3",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T13:56:20.253Z",
+    "updatedAt": "2026-11-12T13:56:20.253Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5945be1e44db8c67285",
+    "recipient": "6af5c5715be1e44db8c6727d",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c5835be1e44db8c67281",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:56:36.976Z",
+    "updatedAt": "2026-11-12T13:56:36.976Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5a25be1e44db8c67287",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Samar has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDM39UA-E781EE5A",
+    "isRead": false,
+    "sentBy": "6af5c5715be1e44db8c6727d",
+    "data": {
+      "orderId": "6af5c5a15be1e44db8c67286",
+      "orderReference": "LA-MWDM39UA-E781EE5A",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "other"
+    },
+    "createdAt": "2026-11-12T13:56:50.226Z",
+    "updatedAt": "2026-11-12T13:56:50.226Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c5ab5be1e44db8c6728a",
+    "recipient": "6af5c5715be1e44db8c6727d",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c5a15be1e44db8c67286",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:56:59.375Z",
+    "updatedAt": "2026-11-12T13:56:59.375Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c63e5be1e44db8c6728c",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDM6M5M-15217BC3",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c63d5be1e44db8c6728b",
+      "orderReference": "LA-MWDM6M5M-15217BC3",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "other"
+    },
+    "createdAt": "2026-11-12T13:59:26.062Z",
+    "updatedAt": "2026-11-12T13:59:26.062Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c65a5be1e44db8c6728f",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c63d5be1e44db8c6728b",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T13:59:54.873Z",
+    "updatedAt": "2026-11-12T13:59:54.873Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c66f5be1e44db8c67293",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDM7O53-5D508FAB",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c66e5be1e44db8c67292",
+      "orderReference": "LA-MWDM7O53-5D508FAB",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T14:00:15.192Z",
+    "updatedAt": "2026-11-12T14:00:15.192Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c68a5be1e44db8c67296",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c66e5be1e44db8c67292",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T14:00:42.034Z",
+    "updatedAt": "2026-11-12T14:00:42.034Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c9575be1e44db8c6729c",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDMNMLV-481DFDC6",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af5c9575be1e44db8c6729b",
+      "orderReference": "LA-MWDMNMLV-481DFDC6",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T14:12:39.900Z",
+    "updatedAt": "2026-11-12T14:12:39.900Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5c98c5be1e44db8c672a3",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6af5c9575be1e44db8c6729b",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-12T14:13:32.230Z",
+    "updatedAt": "2026-11-12T14:13:32.230Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af5d69c846bf377a1702a2a",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Mansi has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWDOOFQR-237A6BBB",
+    "isRead": false,
+    "sentBy": "6af5d68d846bf377a1702a27",
+    "data": {
+      "orderId": "6af5d69c846bf377a1702a29",
+      "orderReference": "LA-MWDOOFQR-237A6BBB",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "gpay"
+    },
+    "createdAt": "2026-11-12T15:09:16.687Z",
+    "updatedAt": "2026-11-12T15:09:16.687Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af66d9580d56a4d22d4c03f",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWEBOG1O-0D612F59",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6af66d8380d56a4d22d4c03e",
+      "orderReference": "LA-MWEBOG1O-0D612F59",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "other"
+    },
+    "createdAt": "2026-11-13T01:53:25.925Z",
+    "updatedAt": "2026-11-13T01:53:25.925Z",
+    "__v": 0
+  },
+  {
+    "_id": "6af695931957dbd813251212",
+    "recipient": null,
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Samar has initiated a UPI payment of ₹200 for 200 coins. Order: LA-MWEHRXZ7-6B5AD441",
+    "isRead": false,
+    "sentBy": "6af5c5715be1e44db8c6727d",
+    "data": {
+      "orderId": "6af695841957dbd813251211",
+      "orderReference": "LA-MWEHRXZ7-6B5AD441",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "other"
+    },
+    "createdAt": "2026-11-13T04:44:03.074Z",
+    "updatedAt": "2026-11-13T04:44:03.074Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02bc200afe23da6806952d",
+    "recipient": "6b02bbbf0afe23da68069526",
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has paid ₹200 for 200 coins via your UPI ID. Order: LA-MWRNVKDF-F5537B68",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6b02bc170afe23da6806952c",
+      "orderReference": "LA-MWRNVKDF-F5537B68",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "other",
+      "screenshotUrl": "/uploads/screenshots/ae54f9ee-e849-4a50-96e5-c6d191352d53.webp"
+    },
+    "createdAt": "2026-11-22T09:55:44.523Z",
+    "updatedAt": "2026-11-22T09:55:44.523Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02bc610afe23da68069532",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 to Coffe-n-Cue has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6b02bc170afe23da6806952c",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-22T09:56:49.722Z",
+    "updatedAt": "2026-11-22T09:56:49.722Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c3df92cfff18aa0e4ff6",
+    "recipient": "6b02bbbf0afe23da68069526",
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "Dishant has paid ₹200 for 200 coins via your UPI ID. Order: LA-MWRP1Y6C-812C6B9E",
+    "isRead": false,
+    "sentBy": "6af5b141752d5eb1ef0dca8b",
+    "data": {
+      "orderId": "6b02c3d092cfff18aa0e4ff5",
+      "orderReference": "LA-MWRP1Y6C-812C6B9E",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "other",
+      "screenshotUrl": "/uploads/screenshots/ed49e735-b325-437c-91bb-3d29fecc2d6c.webp"
+    },
+    "createdAt": "2026-11-22T10:28:47.909Z",
+    "updatedAt": "2026-11-22T10:28:47.909Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c3e892cfff18aa0e4ffb",
+    "recipient": "6af5b141752d5eb1ef0dca8b",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 to Coffe-n-Cue has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6b02c3d092cfff18aa0e4ff5",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-22T10:28:56.762Z",
+    "updatedAt": "2026-11-22T10:28:56.762Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c57592cfff18aa0e4fff",
+    "recipient": "6b02bbbf0afe23da68069526",
+    "type": "payment_alarm",
+    "title": "💰 Payment Verification Required",
+    "message": "player_red has paid ₹200 for 200 coins via your UPI ID. Order: LA-MWRPAT2D-7952907A",
+    "isRead": false,
+    "sentBy": "6af58e5c3b710aa37575e154",
+    "data": {
+      "orderId": "6b02c56e92cfff18aa0e4ffe",
+      "orderReference": "LA-MWRPAT2D-7952907A",
+      "amountRupees": 200,
+      "coinsRequested": 200,
+      "upiPlatform": "other",
+      "screenshotUrl": "/uploads/screenshots/a870e164-9a4a-41ca-8518-5df0c96595fd.png"
+    },
+    "createdAt": "2026-11-22T10:35:33.596Z",
+    "updatedAt": "2026-11-22T10:35:33.596Z",
+    "__v": 0
+  },
+  {
+    "_id": "6b02c57c92cfff18aa0e5005",
+    "recipient": "6af58e5c3b710aa37575e154",
+    "type": "payment_approved",
+    "title": "✅ Payment Verified!",
+    "message": "Your payment of ₹200 to Coffe-n-Cue has been verified. 200 coins have been added to your wallet!",
+    "isRead": false,
+    "sentBy": "6af58e5b3b710aa37575e153",
+    "data": {
+      "orderId": "6b02c56e92cfff18aa0e4ffe",
+      "coinsAdded": 200
+    },
+    "createdAt": "2026-11-22T10:35:40.497Z",
+    "updatedAt": "2026-11-22T10:35:40.497Z",
+    "__v": 0
+  }
+]

@@ -170,6 +170,8 @@ const getMySubWallets = async (req, res) => {
         subAdminActive:
           w.subAdmin?.subAdminInfo?.isActive !== false && w.subAdmin != null,
         balance: w.balance,
+        depositBalance: w.depositBalance || 0,
+        winningBalance: w.winningBalance || 0,
         lockedBattleBalance: w.lockedBattleBalance,
         lockedWithdrawalBalance: w.lockedWithdrawalBalance,
         totalPurchased: w.totalPurchased,
